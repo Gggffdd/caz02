@@ -1,41 +1,28 @@
-import requests
+import telebot
+from telebot.types import MenuButtonWebApp, WebAppInfo
 
-# ========== НАСТРОЙКИ ========== #
-BOT_TOKEN = "7523520150:AAGMPibPAl8D0I0E6ZeNR3zuIp0qKcshXN0"  # Получить у @BotFather
-WEBAPP_URL = "https://benevolent-basbousa-044e27.netlify.app"  # Ваш URL на Netlify
-CHAT_ID = "NONE"  # Узнать у @userinfobot (можно оставить None для первого теста)
-# =============================== #
+TOKEN = "7523520150:AAGMPibPAl8D0I0E6ZeNR3zuIp0qKcshXN0"
+WEBAPP_URL = "https://benevolent-basbousa-044e27.netlify.app"
 
-def setup_bot():
-    # 1. Устанавливаем кнопку меню (постоянную)
-    menu_response = requests.post(
-        f"https://api.telegram.org/bot{BOT_TOKEN}/setChatMenuButton",
-        json={
-            "menu_button": {
-                "type": "web_app",
-                "text": "Открыть приложение",
-                "web_app": {"url": WEBAPP_URL}
-            }
-        }
-    )
-    print("Кнопка меню установлена:", menu_response.json())
+bot = telebot.TeleBot(TOKEN)
 
-    # 2. Отправляем тестовое сообщение с inline-кнопкой
-    if CHAT_ID:
-        message_response = requests.post(
-            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
-            json={
-                "chat_id": CHAT_ID,
-                "text": "Демонстрация WebApp:\nНажмите кнопку ниже, чтобы открыть приложение",
-                "reply_markup": {
-                    "inline_keyboard": [[{
-                        "text": "🚀 Открыть WebApp",
-                        "web_app": {"url": WEBAPP_URL}
-                    }]]
-                }
-            }
-        )
-        print("Сообщение отправлено:", message_response.json())
+# Устанавливаем кнопку меню
+bot.set_chat_menu_button(
+    menu_button=MenuButtonWebApp(
+        text="Играть в Dog House",
+        web_app=WebAppInfo(url=WEBAPP_URL)
+)
 
-if __name__ == "__main__":
-    setup_bot()
+# Обработчик для вывода денег
+@bot.message_handler(func=lambda m: True)
+def handle_messages(message):
+    if message.web_app_data:
+        data = json.loads(message.web_app_data.data)
+        if data['action'] == 'cashout':
+            bot.send_message(
+                message.chat.id,
+                f"💰 Вы вывели {data['amount']} ₽!\n"
+                "Деньги будут зачислены в течение 24 часов."
+            )
+
+bot.infinity_polling()
