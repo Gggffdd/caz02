@@ -3,147 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моё приложение в Telegram</title>
+    <title>Dog House Slots</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-        
-        body {
-            background: #f3f4f6;
-            color: #333;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        h1 {
-            color: #0088cc;
-            margin-bottom: 16px;
-            font-size: 24px;
-            text-align: center;
-        }
-        
-        p {
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-        
-        .form-group {
-            margin-bottom: 16px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        
-        button {
-            background: #0088cc;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-        }
-        
-        button:hover {
-            background: #0077b3;
-        }
-        
-        .btn-close {
-            background: #f44336;
-            margin-top: 12px;
-        }
-        
-        .btn-close:hover {
-            background: #d32f2f;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>✨ Моё приложение в Telegram</h1>
-        <p>Это всплывающее окно работает внутри Telegram. Вы можете добавить сюда любые элементы!</p>
+    <div class="slot-machine">
+        <h1>🐶 DOG HOUSE SLOTS 🐕</h1>
         
-        <div class="form-group">
-            <label for="name">Ваше имя:</label>
-            <input type="text" id="name" placeholder="Введите имя">
+        <div class="slots">
+            <div class="reel" id="reel1">🍒</div>
+            <div class="reel" id="reel2">🍋</div>
+            <div class="reel" id="reel3">🐶</div>
         </div>
         
-        <div class="form-group">
-            <label for="message">Сообщение:</label>
-            <textarea id="message" rows="3" placeholder="Введите сообщение..."></textarea>
+        <div class="controls">
+            <div class="balance">Баланс: <span id="balance">100</span> ₽</div>
+            <div class="bet">Ставка: <span id="bet">10</span> ₽</div>
+            <button id="spin-btn">Крутить!</button>
+            <button id="cashout-btn">Забрать деньги</button>
         </div>
-        
-        <button onclick="sendData()">Отправить данные</button>
-        <button class="btn-close" onclick="Telegram.WebApp.close()">Закрыть окно</button>
     </div>
-
-    <script>
-        // Инициализация WebApp Telegram
-        Telegram.WebApp.ready();
-        
-        // Показываем кнопку "Назад" в интерфейсе Telegram
-        Telegram.WebApp.BackButton.show();
-        Telegram.WebApp.BackButton.onClick(() => {
-            Telegram.WebApp.close();
-        });
-        
-        // Функция отправки данных в бота
-        function sendData() {
-            const name = document.getElementById('name').value;
-            const message = document.getElementById('message').value;
-            
-            if (!name || !message) {
-                alert('Заполните все поля!');
-                return;
-            }
-            
-            // Отправляем данные в бота
-            Telegram.WebApp.sendData(JSON.stringify({
-                name: name,
-                message: message
-            }));
-            
-            // Закрываем веб-приложение после отправки
-            setTimeout(() => {
-                Telegram.WebApp.close();
-            }, 500);
-        }
-        
-        // Можно получить данные пользователя Telegram
-        const user = Telegram.WebApp.initDataUnsafe.user;
-        if (user) {
-            console.log('Пользователь:', user);
-            // Можно например отобразить приветствие:
-            // document.getElementById('greeting').innerText = `Привет, ${user.first_name}!`;
-        }
-    </script>
+    
+    <script src="script.js"></script>
 </body>
 </html>
