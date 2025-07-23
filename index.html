@@ -10,60 +10,77 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="particles-container"></div>
-    <div class="animated-bg"></div>
-    
-    <div class="slot-machine">
-        <div class="gold-frame"></div>
+    <div class="landscape-container">
+        <div class="background-sky"></div>
+        <div class="background-field"></div>
+        <div class="dog-background">🐶</div>
         
-        <div class="header">
-            <div class="logo-container">
-                <div class="logo">
-                    <i class="fas fa-dog"></i>
-                    <span>DOG HOUSE</span>
+        <div class="particles-container"></div>
+        <div class="animated-bg"></div>
+        
+        <div class="slot-machine">
+            <div class="gold-frame"></div>
+            
+            <div class="header">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-dog"></i>
+                        <span>DOG HOUSE</span>
+                    </div>
+                </div>
+                
+                <div class="balance-container">
+                    <div class="balance-label">BALANCE</div>
+                    <div class="balance" id="balance">10,000</div>
                 </div>
             </div>
             
-            <div class="balance-container">
-                <div class="balance-label">BALANCE</div>
-                <div class="balance" id="balance">10,000</div>
-            </div>
-        </div>
-        
-        <div class="slot-container">
-            <div class="reels-frame">
-                <div class="reels" id="reels"></div>
-            </div>
-            
-            <div class="paylines">
-                <div class="payline active" id="payline1"></div>
-                <div class="payline" id="payline2"></div>
-                <div class="payline" id="payline3"></div>
-            </div>
-        </div>
-        
-        <div class="control-panel">
-            <div class="bet-control">
-                <button class="bet-btn" id="bet-down">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <div class="bet-display-container">
-                    <div class="bet-display" id="bet">100</div>
+            <div class="slot-container">
+                <div class="reels-frame">
+                    <div class="reels" id="reels"></div>
                 </div>
-                <button class="bet-btn" id="bet-up">
-                    <i class="fas fa-plus"></i>
-                </button>
+                
+                <div class="paylines">
+                    <div class="payline active" id="payline1"></div>
+                    <div class="payline" id="payline2"></div>
+                    <div class="payline" id="payline3"></div>
+                </div>
             </div>
             
-            <div class="spin-container">
-                <button class="spin-btn" id="spin-btn">
-                    <div class="spin-text">SPIN</div>
-                </button>
+            <div class="control-panel">
+                <div class="bet-control">
+                    <button class="bet-btn" id="bet-down">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <div class="bet-display-container">
+                        <div class="bet-display" id="bet">100</div>
+                    </div>
+                    <button class="bet-btn" id="bet-up">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <div class="spin-container">
+                    <button class="spin-btn" id="spin-btn">
+                        <div class="spin-text">SPIN</div>
+                    </button>
+                </div>
+                
+                <div class="win-display-container">
+                    <div class="win-display-label">WIN</div>
+                    <div class="win-display" id="win-display">0</div>
+                </div>
             </div>
             
-            <div class="win-display-container">
-                <div class="win-display-label">WIN</div>
-                <div class="win-display" id="win-display">0</div>
+            <div class="bonus-display" id="bonus-display">
+                <div class="bonus-spins">
+                    <i class="fas fa-coins"></i>
+                    <span id="bonus-spins-left">0</span>
+                </div>
+                <div class="bonus-amount">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span id="bonus-coins">0</span>
+                </div>
             </div>
         </div>
     </div>
@@ -72,6 +89,8 @@
     <audio id="win-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
     <audio id="reel-stop-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
     <audio id="bet-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
+    <audio id="bonus-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" preload="auto"></audio>
+    <audio id="coin-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-coins-handling-1935.mp3" preload="auto"></audio>
     
     <div class="win-animation" id="win-animation"></div>
     
