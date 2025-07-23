@@ -2,28 +2,64 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dog House Slots</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="slot-machine">
-        <h1>🐶 DOG HOUSE SLOTS 🐕</h1>
-        
-        <div class="slots">
-            <div class="reel" id="reel1">🍒</div>
-            <div class="reel" id="reel2">🍋</div>
-            <div class="reel" id="reel3">🐶</div>
+        <div class="header">
+            <div class="logo">DOG HOUSE</div>
+            <div class="balance-container">
+                <div class="balance-label">BALANCE</div>
+                <div class="balance" id="balance">10,000</div>
+            </div>
         </div>
         
-        <div class="controls">
-            <div class="balance">Баланс: <span id="balance">100</span> ₽</div>
-            <div class="bet">Ставка: <span id="bet">10</span> ₽</div>
-            <button id="spin-btn">Крутить!</button>
-            <button id="cashout-btn">Забрать деньги</button>
+        <div class="slot-container">
+            <div class="reels" id="reels">
+                <!-- Генерируется в JS -->
+            </div>
+            <div class="paylines">
+                <div class="payline" id="payline1"></div>
+                <!-- Остальные линии выплат -->
+            </div>
+        </div>
+        
+        <div class="control-panel">
+            <div class="bet-control">
+                <button class="bet-btn" id="bet-down">-</button>
+                <div class="bet-display" id="bet">100</div>
+                <button class="bet-btn" id="bet-up">+</button>
+            </div>
+            
+            <button class="spin-btn" id="spin-btn">
+                <span class="spin-text">SPIN</span>
+                <div class="spin-light"></div>
+            </button>
+            
+            <div class="win-display" id="win-display">0</div>
+        </div>
+        
+        <div class="paytable-btn" id="paytable-btn">PAYTABLE</div>
+    </div>
+    
+    <!-- Модальное окно выплат -->
+    <div class="modal" id="paytable-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>PAYTABLE</h2>
+            <div class="paytable" id="paytable">
+                <!-- Генерируется в JS -->
+            </div>
         </div>
     </div>
+    
+    <audio id="spin-sound" src="assets/sounds/spin.mp3" preload="auto"></audio>
+    <audio id="win-sound" src="assets/sounds/win.mp3" preload="auto"></audio>
+    <audio id="reel-stop-sound" src="assets/sounds/reel-stop.mp3" preload="auto"></audio>
     
     <script src="script.js"></script>
 </body>
