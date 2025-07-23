@@ -3,50 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dog House Slots | Premium Edition</title>
+    <title>Dog House Slots</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&family=Russo+One&family=Bangers&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="particles-container"></div>
     <div class="animated-bg"></div>
-    <div class="diamond-effects"></div>
-    <div class="light-beams"></div>
     
     <div class="slot-machine">
         <div class="gold-frame"></div>
-        <div class="crystal-effects"></div>
         
         <div class="header">
             <div class="logo-container">
-                <div class="logo-shine"></div>
                 <div class="logo">
                     <i class="fas fa-dog"></i>
                     <span>DOG HOUSE</span>
                 </div>
-                <div class="logo-sub">PREMIUM SLOTS</div>
-                <div class="logo-paw"></div>
             </div>
             
             <div class="balance-container">
-                <div class="coin-animation"></div>
                 <div class="balance-label">BALANCE</div>
                 <div class="balance" id="balance">10,000</div>
-                <div class="balance-shadow"></div>
-                <div class="balance-glow"></div>
             </div>
         </div>
         
         <div class="slot-container">
             <div class="reels-frame">
-                <div class="frame-top"></div>
-                <div class="frame-left"></div>
-                <div class="frame-right"></div>
-                <div class="frame-bottom"></div>
-                <div class="frame-corners"></div>
-                
                 <div class="reels" id="reels"></div>
             </div>
             
@@ -54,9 +39,6 @@
                 <div class="payline active" id="payline1"></div>
                 <div class="payline" id="payline2"></div>
                 <div class="payline" id="payline3"></div>
-                <div class="payline" id="payline4"></div>
-                <div class="payline" id="payline5"></div>
-                <div class="payline" id="payline6"></div>
             </div>
         </div>
         
@@ -67,8 +49,6 @@
                 </button>
                 <div class="bet-display-container">
                     <div class="bet-display" id="bet">100</div>
-                    <div class="bet-shadow">100</div>
-                    <div class="bet-glow"></div>
                 </div>
                 <button class="bet-btn" id="bet-up">
                     <i class="fas fa-plus"></i>
@@ -76,68 +56,14 @@
             </div>
             
             <div class="spin-container">
-                <div class="spin-glow"></div>
-                <div class="spin-ring"></div>
                 <button class="spin-btn" id="spin-btn">
                     <div class="spin-text">SPIN</div>
-                    <div class="spin-light"></div>
-                    <div class="spin-dots">
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                        <div class="dot"></div>
-                    </div>
                 </button>
             </div>
             
             <div class="win-display-container">
                 <div class="win-display-label">WIN</div>
                 <div class="win-display" id="win-display">0</div>
-                <div class="win-particles"></div>
-                <div class="win-crown"><i class="fas fa-crown"></i></div>
-            </div>
-        </div>
-        
-        <div class="mystery-box" id="mystery-box">
-            <i class="fas fa-gift"></i>
-            <div class="box-glow"></div>
-        </div>
-        
-        <div class="paytable-btn" id="paytable-btn">
-            <i class="fas fa-star"></i>
-            PAYTABLE
-        </div>
-        
-        <div class="sound-toggle" id="sound-toggle">
-            <i class="fas fa-volume-up"></i>
-        </div>
-        
-        <div class="jackpot-indicator">
-            <i class="fas fa-trophy"></i>
-            <span>JACKPOT: 10,000</span>
-        </div>
-    </div>
-    
-    <div class="modal" id="paytable-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>PAYTABLE & BONUSES</h2>
-                <span class="close">&times;</span>
-            </div>
-            <div class="paytable" id="paytable"></div>
-            <div class="bonus-section">
-                <h3>SPECIAL FEATURES</h3>
-                <div class="bonus-item">
-                    <div class="bonus-icon"><i class="fas fa-paw"></i></div>
-                    <div class="bonus-text">Wild Dog substitutes all symbols</div>
-                </div>
-                <div class="bonus-item">
-                    <div class="bonus-icon"><i class="fas fa-home"></i></div>
-                    <div class="bonus-text">3 House symbols trigger Free Spins</div>
-                </div>
-                <div class="bonus-item">
-                    <div class="bonus-icon"><i class="fas fa-bone"></i></div>
-                    <div class="bonus-text">Bone symbols multiply wins x2</div>
-                </div>
             </div>
         </div>
     </div>
@@ -146,7 +72,6 @@
     <audio id="win-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
     <audio id="reel-stop-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
     <audio id="bet-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
-    <audio id="bonus-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-bonus-earned-2065.mp3" preload="auto"></audio>
     
     <div class="win-animation" id="win-animation"></div>
     
