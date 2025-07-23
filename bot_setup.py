@@ -12,15 +12,18 @@ bot.set_chat_menu_button(
         type="web_app",
         text="🎰 Dog House Slots",
         web_app=WebAppInfo(url=WEBAPP_URL)
+    )
 )
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton(
-        "🎮 Играть в Dog House", 
-        web_app=WebAppInfo(url=WEBAPP_URL)
-    ))
+    markup.add(
+        InlineKeyboardButton(
+            "🎮 Играть в Dog House", 
+            web_app=WebAppInfo(url=WEBAPP_URL)
+        )
+    )
     
     bot.send_message(
         message.chat.id,
