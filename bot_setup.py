@@ -1,8 +1,8 @@
 import telebot
 from telebot.types import MenuButtonWebApp, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
-TOKEN = "ВАШ_ТОКЕН_БОТА"
-WEBAPP_URL = "https://ваш-домен.netlify.app"
+TOKEN = "7523520150:AAGMPibPAl8D0I0E6ZeNR3zuIp0qKcshXN0"
+WEBAPP_URL = "https://benevolent-basbousa-044e27.netlify.app"
 
 bot = telebot.TeleBot(TOKEN)
 
