@@ -168,28 +168,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const startTime = Date.now();
         const reelHeight = 100; // 100% на символ
         
-        // Создаем клоны для бесконечной прокрутки
-        symbols.forEach(symbol => {
-            const clone = symbol.cloneNode(true);
-            clone.style.transform = `translateY(-${reelHeight}%)`;
-            reel.appendChild(clone);
-        });
+        // Начальные позиции
+        const startPositions = Array.from(symbols).map(s => parseInt(s.dataset.pos));
         
         function animate() {
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / spinDuration, 1);
             const easedProgress = 1 - Math.pow(1 - progress, 3); // Кубическое замедление
             
-            // Прокрутка символов
+            // Плавное перемещение символов
             symbols.forEach((symbol, i) => {
-                const position = -(easedProgress * reelHeight * 3) + (i * reelHeight);
-                symbol.style.transform = `translateY(${position}%)`;
-                
-                // Клоны
-                const clone = reel.children[i + 3];
-                if (clone) {
-                    clone.style.transform = `translateY(${position - reelHeight}%)`;
-                }
+                const newPosition = (startPositions[i] + easedProgress * 10) % 3;
+                symbol.style.transform = `translateY(${newPosition * 100}%)`;
             });
             
             if (progress < 1) {
@@ -203,13 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function stopReel(reel, reelIndex) {
-        // Удаляем клоны
-        while (reel.children.length > 3) {
-            reel.removeChild(reel.lastChild);
-        }
-        
         // Выбираем случайную позицию для остановки
-        const stopPos = Math.floor(Math.random() * (config.reelStrips[reelIndex].length - 2));
+        const stopPos = Math.floor(Math.random() * config.reelStrips[reelIndex].length);
         const symbols = reel.querySelectorAll('.reel-symbol');
         
         // Обновляем символы
@@ -218,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const symbolData = config.symbols[config.reelStrips[reelIndex][stripPos]];
             symbol.innerHTML = `<div class="symbol-img" style="color:${symbolData.color}">${symbolData.emoji}</div>`;
             symbol.dataset.symbolId = symbolData.id;
+            // Устанавливаем финальную позицию
             symbol.style.transform = `translateY(${symbolIndex * 100}%)`;
         });
         
@@ -226,11 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Проверяем все ли барабаны остановились
         setTimeout(() => {
-            const allStopped = [...document.querySelectorAll('.reel')].every(r => {
-                return !r.classList.contains('spinning');
-            });
-            
-            if (allStopped) {
+            const spinningReels = document.querySelectorAll('.reel:not(.stopped)');
+            if (spinningReels.length === 0) {
                 gameState.spinning = false;
                 checkWins();
             }
