@@ -77,30 +77,30 @@ body {
     left: 0;
     width: 100%;
     height: 50%;
-    background: linear-gradient(to bottom, #87ceeb, #5D8AA8);
+    background: linear-gradient(to bottom, #5e9bff, #87ceeb);
     z-index: -3;
     overflow: hidden;
 }
 
 .cloud {
     position: absolute;
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
-    filter: blur(4px);
+    filter: blur(10px);
     z-index: -2;
 }
 
 .cloud1 {
-    width: 120px;
-    height: 50px;
+    width: 150px;
+    height: 60px;
     top: 15%;
     left: -150px;
     animation: cloud-move 35s linear infinite;
 }
 
 .cloud2 {
-    width: 80px;
-    height: 35px;
+    width: 100px;
+    height: 40px;
     top: 25%;
     left: -150px;
     animation: cloud-move 25s linear infinite;
@@ -108,8 +108,8 @@ body {
 }
 
 .cloud3 {
-    width: 100px;
-    height: 40px;
+    width: 120px;
+    height: 50px;
     top: 35%;
     left: -150px;
     animation: cloud-move 30s linear infinite;
@@ -151,10 +151,10 @@ body {
     width: 100%;
     height: 50%;
     background: 
-        linear-gradient(to top, #4CAF50, #388E3C),
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,50 Q25,30 50,50 T100,50" stroke="%23388E3C" fill="%23388E3C" stroke-width="0"/></svg>');
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect fill="%23388E3C" width="400" height="400"/><path d="M0,200 Q100,150 200,200 T400,200 L400,400 L0,400 Z" fill="%232e7d32"/><path d="M0,300 Q100,250 200,300 T400,300 L400,400 L0,400 Z" fill="%231b5e20"/></svg>'),
+        linear-gradient(to top, #2e7d32, #1b5e20);
+    background-size: 300px, auto;
     background-blend-mode: multiply;
-    background-size: 300px;
     z-index: -2;
 }
 
@@ -162,8 +162,8 @@ body {
     position: absolute;
     bottom: 20%;
     right: 10%;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     z-index: -1;
     animation: dog-bounce 4s infinite ease-in-out;
 }
@@ -181,7 +181,8 @@ body {
     background: #d2691e;
     border-radius: 50%;
     top: 20px;
-    left: 20px;
+    left: 35px;
+    z-index: 2;
 }
 
 .dog-ear {
@@ -191,6 +192,7 @@ body {
     background: #8b4513;
     border-radius: 50%;
     top: -10px;
+    z-index: 1;
 }
 
 .dog-ear.left {
@@ -255,6 +257,57 @@ body {
     animation: tongue-move 1.5s infinite alternate;
 }
 
+.dog-body {
+    position: absolute;
+    width: 100px;
+    height: 60px;
+    background: #d2691e;
+    border-radius: 40% 40% 30% 30%;
+    top: 70px;
+    left: 25px;
+    z-index: 1;
+}
+
+.dog-leg {
+    position: absolute;
+    width: 15px;
+    height: 40px;
+    background: #8b4513;
+    border-radius: 10px;
+    bottom: 20px;
+    z-index: 0;
+}
+
+.dog-leg.front-left {
+    left: 35px;
+}
+
+.dog-leg.front-right {
+    left: 80px;
+}
+
+.dog-leg.back-left {
+    left: 50px;
+    height: 35px;
+}
+
+.dog-leg.back-right {
+    left: 95px;
+    height: 35px;
+}
+
+.dog-tail {
+    position: absolute;
+    width: 50px;
+    height: 15px;
+    background: #8b4513;
+    border-radius: 0 10px 10px 0;
+    top: 70px;
+    left: 0;
+    transform-origin: right center;
+    animation: tail-wag 2s infinite alternate;
+}
+
 @keyframes tongue-move {
     0% { height: 10px; bottom: -5px; }
     100% { height: 20px; bottom: 0; }
@@ -263,6 +316,11 @@ body {
 @keyframes dog-bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
+}
+
+@keyframes tail-wag {
+    0% { transform: rotate(-20deg); }
+    100% { transform: rotate(20deg); }
 }
 
 .particles-container {
@@ -285,11 +343,11 @@ body {
 .slot-machine {
     width: 95%;
     max-width: 500px;
-    height: 90vh;
+    height: 95vh;
     background: linear-gradient(145deg, rgba(26, 26, 46, 0.95) 0%, rgba(13, 13, 26, 0.98) 100%);
     border-radius: 25px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 159, 28, 0.3);
-    padding: 15px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -315,7 +373,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     z-index: 2;
 }
 
@@ -361,10 +419,10 @@ body {
     flex-grow: 1;
     background: rgba(0, 0, 0, 0.25);
     border-radius: 15px;
-    padding: 10px;
+    padding: 8px;
     position: relative;
     overflow: hidden;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     border: 2px solid rgba(255, 159, 28, 0.3);
 }
 
@@ -449,7 +507,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .bet-control {
@@ -688,7 +746,7 @@ body {
 @media (max-width: 500px) {
     .slot-machine {
         height: 95vh;
-        padding: 10px;
+        padding: 8px;
     }
     
     .logo {
@@ -705,9 +763,13 @@ body {
     }
     
     .dog-container {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         bottom: 15%;
         right: 5%;
+    }
+    
+    .reel-symbol {
+        font-size: 30px;
     }
 }
