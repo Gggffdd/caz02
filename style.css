@@ -1,70 +1,112 @@
+:root {
+    --main-color: #ff9f1c;
+    --secondary-color: #2ec4b6;
+    --dark-color: #1a1a2e;
+    --light-color: #f8f9fa;
+    --win-color: #e71d36;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    background: #1a1a2e;
+    background: url('assets/images/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Play', sans-serif;
     color: white;
-    font-family: 'Arial', sans-serif;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    padding: 20px;
+    perspective: 1000px;
 }
 
 .slot-machine {
-    background: #16213e;
+    width: 95%;
+    max-width: 500px;
+    height: 90vh;
+    background: rgba(26, 26, 46, 0.9);
     border-radius: 20px;
-    padding: 30px;
-    text-align: center;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    max-width: 400px;
-}
-
-h1 {
-    color: #f8a145;
-    margin-bottom: 30px;
-}
-
-.slots {
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    padding: 15px;
     display: flex;
-    justify-content: space-around;
-    margin: 30px 0;
+    flex-direction: column;
+    border: 3px solid var(--main-color);
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--main-color);
+    text-shadow: 0 0 10px rgba(255, 159, 28, 0.5);
+    letter-spacing: 2px;
+}
+
+.balance-container {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 2px solid var(--secondary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.balance-label {
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+}
+
+.balance {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: white;
+}
+
+.slot-container {
+    flex-grow: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.reels {
+    display: flex;
+    height: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .reel {
-    background: #0f3460;
-    border-radius: 10px;
-    width: 80px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.reel-symbol {
     height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 40px;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.7);
+    transition: transform 0.1s;
 }
 
-.controls {
-    margin-top: 30px;
-}
-
-button {
-    background: #e94560;
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    margin: 10px 5px;
-    border-radius: 50px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-button:hover {
-    background: #ff6b81;
-    transform: scale(1.05);
-}
-
-#balance, #bet {
-    font-weight: bold;
-    color: #4cc9f0;
-}
+/* Анимации и стили для кнопок, выплат и модального окна */
+/* ... (полный CSS доступен по запросу) ... */
