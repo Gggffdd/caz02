@@ -10,17 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 4, name: "10", emoji: "🔔", payout: [0, 0, 5, 15], color: "#C5D86D" },
             { id: 5, name: "Dog", emoji: "🐶", payout: [0, 0, 50, 200], color: "#FFD166" },
             { id: 6, name: "Bone", emoji: "🦴", payout: [0, 0, 75, 300], color: "#F7F7F7" },
-            { id: 7, name: "House", emoji: "🏠", payout: [0, 0, 100, 500], color: "#118AB2" }
+            { id: 7, name: "House", emoji: "🏠", payout: [0, 0, 100, 500], color: "#118AB2" },
+            { id: 8, name: "Coin", emoji: "🪙", payout: [0, 0, 0, 0], color: "#FFD700", bonus: true }
         ],
         paylines: [
-            [0, 0, 0], // Верхняя линия
-            [1, 1, 1], // Центральная линия
-            [2, 2, 2]  // Нижняя линия
+            [0, 0, 0],
+            [1, 1, 1],
+            [2, 2, 2]
         ],
         reelStrips: [
-            [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5],
-            [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5],
-            [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5]
+            [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 8],
+            [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 8],
+            [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 8]
         ],
         betOptions: [10, 25, 50, 100, 250, 500],
         initialBalance: 10000
@@ -30,7 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
         balance: config.initialBalance,
         bet: config.betOptions[3],
         spinning: false,
-        currentWin: 0
+        currentWin: 0,
+        bonus: {
+            active: false,
+            spinsLeft: 0,
+            coins: []
+        }
     };
     
     initGame();
@@ -44,6 +50,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('spin-btn').addEventListener('click', startSpin);
         document.getElementById('bet-up').addEventListener('click', increaseBet);
         document.getElementById('bet-down').addEventListener('click', decreaseBet);
+        
+        // Ориентация экрана
+        screen.orientation.addEventListener("change", handleOrientationChange);
+        handleOrientationChange();
+    }
+    
+    function handleOrientationChange() {
+        const container = document.querySelector('.landscape-container');
+        if (screen.orientation.type.includes('portrait')) {
+            container.style.transform = 'rotate(90deg)';
+            container.style.width = '100vh';
+            container.style.height = '100vw';
+        } else {
+            container.style.transform = 'rotate(0deg)';
+            container.style.width = '100%';
+            container.style.height = '100%';
+        }
     }
     
     function createParticles() {
@@ -89,6 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 symbol.innerHTML = `<div class="symbol-img" style="color:${symbolData.color}">${symbolData.emoji}</div>`;
                 symbol.dataset.symbolId = symbolData.id;
                 
+                if (symbolData.bonus) {
+                    symbol.classList.add('coin-symbol');
+                }
+                
                 reel.appendChild(symbol);
             }
             
@@ -98,14 +125,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function startSpin() {
         if (gameState.spinning) return;
-        if (gameState.balance < gameState.bet) {
+        
+        // Проверка баланса только в обычном режиме
+        if (!gameState.bonus.active && gameState.balance < gameState.bet) {
             showMessage("Недостаточно средств!");
             return;
         }
         
         gameState.spinning = true;
         gameState.currentWin = 0;
-        gameState.balance -= gameState.bet;
+        
+        // Списание средств только в обычном режиме
+        if (!gameState.bonus.active) {
+            gameState.balance -= gameState.bet;
+        }
+        
         updateBalance();
         document.getElementById('win-display').textContent = "0";
         
@@ -144,6 +178,13 @@ document.addEventListener('DOMContentLoaded', () => {
         symbol.innerHTML = `<div class="symbol-img" style="color:${symbolData.color}">${symbolData.emoji}</div>`;
         symbol.dataset.symbolId = symbolData.id;
         
+        // Обновляем класс для монетки
+        if (symbolData.bonus) {
+            symbol.classList.add('coin-symbol');
+        } else {
+            symbol.classList.remove('coin-symbol');
+        }
+        
         symbol.style.transition = 'none';
         symbol.style.transform = 'translateY(-150%)';
         
@@ -172,6 +213,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         let totalWin = 0;
+        let bonusTriggered = false;
+        
+        // Проверка бонуса (3 монетки на центральной линии)
+        const centerLine = [visibleSymbols[0][1], visibleSymbols[1][1], visibleSymbols[2][1]];
+        if (centerLine.every(sym => sym === 8)) {
+            activateBonus();
+            bonusTriggered = true;
+        }
+        
+        // Проверка обычных выигрышей
         config.paylines.forEach((line, lineIndex) => {
             const lineSymbols = line.map((row, col) => visibleSymbols[col][row]);
             const win = evaluateLine(lineSymbols);
@@ -182,6 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
+        // Проверка монеток в бонусном режиме
+        if (gameState.bonus.active && !bonusTriggered) {
+            collectBonusCoins(visibleSymbols);
+        }
+        
         if (totalWin > 0) {
             gameState.currentWin = totalWin;
             gameState.balance += totalWin;
@@ -190,6 +246,11 @@ document.addEventListener('DOMContentLoaded', () => {
             playSound('win-sound');
             animateWin(totalWin);
             document.getElementById('win-display').textContent = totalWin.toLocaleString();
+        }
+        
+        // Завершение бонусного режима
+        if (gameState.bonus.active && gameState.bonus.spinsLeft <= 0) {
+            finishBonus();
         }
     }
     
@@ -209,6 +270,73 @@ document.addEventListener('DOMContentLoaded', () => {
             const symbol = reel.querySelector(`.reel-symbol:nth-child(${row + 1})`);
             symbol.classList.add('win-symbol');
         });
+    }
+    
+    function activateBonus() {
+        gameState.bonus.active = true;
+        gameState.bonus.spinsLeft = 5;
+        gameState.bonus.coins = [];
+        
+        document.getElementById('bonus-display').style.display = 'flex';
+        updateBonusDisplay();
+        
+        playSound('bonus-sound');
+        showMessage("БОНУС! 5 бесплатных вращений!");
+    }
+    
+    function collectBonusCoins(visibleSymbols) {
+        for (let col = 0; col < 3; col++) {
+            for (let row = 0; row < 3; row++) {
+                if (visibleSymbols[col][row] === 8) {
+                    const coinValue = Math.floor(Math.random() * 5 + 1) * gameState.bet;
+                    gameState.bonus.coins.push(coinValue);
+                    
+                    // Отображение значения монетки
+                    const symbolElement = document.querySelector(
+                        `#reel-${col} .reel-symbol:nth-child(${row + 1})`
+                    );
+                    
+                    showCoinValue(symbolElement, coinValue);
+                }
+            }
+        }
+        
+        gameState.bonus.spinsLeft--;
+        updateBonusDisplay();
+    }
+    
+    function showCoinValue(element, value) {
+        const coinValue = document.createElement('div');
+        coinValue.className = 'coin-value';
+        coinValue.textContent = `+${value}`;
+        
+        element.appendChild(coinValue);
+        playSound('coin-sound');
+        
+        setTimeout(() => {
+            coinValue.remove();
+        }, 1500);
+    }
+    
+    function finishBonus() {
+        const totalBonus = gameState.bonus.coins.reduce((sum, coin) => sum + coin, 0);
+        
+        if (totalBonus > 0) {
+            gameState.balance += totalBonus;
+            updateBalance();
+            showMessage(`Бонусные монетки: ${totalBonus.toLocaleString()}!`);
+            animateWin(totalBonus);
+        }
+        
+        gameState.bonus.active = false;
+        document.getElementById('bonus-display').style.display = 'none';
+    }
+    
+    function updateBonusDisplay() {
+        document.getElementById('bonus-spins-left').textContent = gameState.bonus.spinsLeft;
+        
+        const totalCoins = gameState.bonus.coins.reduce((sum, coin) => sum + coin, 0);
+        document.getElementById('bonus-coins').textContent = totalCoins.toLocaleString();
     }
     
     function animateWin(amount) {
