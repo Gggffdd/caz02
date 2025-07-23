@@ -77,71 +77,9 @@ body {
     left: 0;
     width: 100%;
     height: 50%;
-    background: linear-gradient(to bottom, #5e9bff, #87ceeb);
+    background: linear-gradient(to bottom, #1a3a8f, #5e9bff, #87ceeb);
     z-index: -3;
     overflow: hidden;
-}
-
-.cloud {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    filter: blur(10px);
-    z-index: -2;
-}
-
-.cloud1 {
-    width: 150px;
-    height: 60px;
-    top: 15%;
-    left: -150px;
-    animation: cloud-move 35s linear infinite;
-}
-
-.cloud2 {
-    width: 100px;
-    height: 40px;
-    top: 25%;
-    left: -150px;
-    animation: cloud-move 25s linear infinite;
-    animation-delay: 10s;
-}
-
-.cloud3 {
-    width: 120px;
-    height: 50px;
-    top: 35%;
-    left: -150px;
-    animation: cloud-move 30s linear infinite;
-    animation-delay: 5s;
-}
-
-@keyframes cloud-move {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(150vw); }
-}
-
-.bird {
-    position: absolute;
-    width: 30px;
-    height: 20px;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M0,25 Q30,0 60,25 T100,25" stroke="black" fill="none" stroke-width="3"/></svg>');
-    background-size: contain;
-    top: 20%;
-    left: -50px;
-    animation: fly 15s linear infinite;
-    z-index: -1;
-}
-
-.bird2 {
-    top: 40%;
-    animation-duration: 20s;
-    animation-delay: 5s;
-}
-
-@keyframes fly {
-    0% { left: -50px; }
-    100% { left: 100%; }
 }
 
 .background-field {
@@ -151,176 +89,32 @@ body {
     width: 100%;
     height: 50%;
     background: 
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect fill="%23388E3C" width="400" height="400"/><path d="M0,200 Q100,150 200,200 T400,200 L400,400 L0,400 Z" fill="%232e7d32"/><path d="M0,300 Q100,250 200,300 T400,300 L400,400 L0,400 Z" fill="%231b5e20"/></svg>'),
-        linear-gradient(to top, #2e7d32, #1b5e20);
-    background-size: 300px, auto;
-    background-blend-mode: multiply;
+        linear-gradient(to top, #2a5d34, #3c8a4a, #4db861),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%232a5d34"/><circle cx="20" cy="20" r="2" fill="%233c8a4a"/><circle cx="50" cy="30" r="3" fill="%233c8a4a"/><circle cx="70" cy="20" r="1" fill="%233c8a4a"/><circle cx="40" cy="10" r="2" fill="%233c8a4a"/><circle cx="90" cy="40" r="1" fill="%233c8a4a"/></svg>');
+    background-size: auto, 150px;
+    background-blend-mode: overlay;
     z-index: -2;
 }
 
 .dog-container {
     position: absolute;
     bottom: 20%;
-    right: 10%;
-    width: 150px;
-    height: 150px;
+    right: 5%;
+    width: 120px;
+    height: 120px;
     z-index: -1;
     animation: dog-bounce 4s infinite ease-in-out;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border: 2px solid #8B4513;
 }
 
-.dog {
-    position: relative;
+.dog-image {
     width: 100%;
     height: 100%;
-}
-
-.dog-head {
-    position: absolute;
-    width: 80px;
-    height: 80px;
-    background: #d2691e;
+    object-fit: cover;
     border-radius: 50%;
-    top: 20px;
-    left: 35px;
-    z-index: 2;
-}
-
-.dog-ear {
-    position: absolute;
-    width: 25px;
-    height: 40px;
-    background: #8b4513;
-    border-radius: 50%;
-    top: -10px;
-    z-index: 1;
-}
-
-.dog-ear.left {
-    left: 10px;
-    transform: rotate(-20deg);
-}
-
-.dog-ear.right {
-    right: 10px;
-    transform: rotate(20deg);
-}
-
-.dog-eye {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: black;
-    border-radius: 50%;
-    top: 30px;
-}
-
-.dog-eye.left {
-    left: 20px;
-}
-
-.dog-eye.right {
-    right: 20px;
-}
-
-.dog-nose {
-    position: absolute;
-    width: 15px;
-    height: 10px;
-    background: black;
-    border-radius: 50%;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.dog-mouth {
-    position: absolute;
-    width: 30px;
-    height: 15px;
-    background: #f5f5dc;
-    border-radius: 0 0 15px 15px;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    overflow: hidden;
-}
-
-.dog-tongue {
-    position: absolute;
-    width: 15px;
-    height: 10px;
-    background: #ff6b6b;
-    border-radius: 50%;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: tongue-move 1.5s infinite alternate;
-}
-
-.dog-body {
-    position: absolute;
-    width: 100px;
-    height: 60px;
-    background: #d2691e;
-    border-radius: 40% 40% 30% 30%;
-    top: 70px;
-    left: 25px;
-    z-index: 1;
-}
-
-.dog-leg {
-    position: absolute;
-    width: 15px;
-    height: 40px;
-    background: #8b4513;
-    border-radius: 10px;
-    bottom: 20px;
-    z-index: 0;
-}
-
-.dog-leg.front-left {
-    left: 35px;
-}
-
-.dog-leg.front-right {
-    left: 80px;
-}
-
-.dog-leg.back-left {
-    left: 50px;
-    height: 35px;
-}
-
-.dog-leg.back-right {
-    left: 95px;
-    height: 35px;
-}
-
-.dog-tail {
-    position: absolute;
-    width: 50px;
-    height: 15px;
-    background: #8b4513;
-    border-radius: 0 10px 10px 0;
-    top: 70px;
-    left: 0;
-    transform-origin: right center;
-    animation: tail-wag 2s infinite alternate;
-}
-
-@keyframes tongue-move {
-    0% { height: 10px; bottom: -5px; }
-    100% { height: 20px; bottom: 0; }
-}
-
-@keyframes dog-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
-@keyframes tail-wag {
-    0% { transform: rotate(-20deg); }
-    100% { transform: rotate(20deg); }
 }
 
 .particles-container {
@@ -492,6 +286,8 @@ body {
     border-radius: 2px;
     transition: all 0.3s;
     z-index: 4;
+    left: 0;
+    right: 0;
 }
 
 .payline.active {
@@ -502,6 +298,8 @@ body {
 #payline1 { top: 16.5%; }
 #payline2 { top: 50%; }
 #payline3 { top: 83.5%; }
+#payline4 { top: 33%; }
+#payline5 { top: 66%; }
 
 .control-panel {
     display: flex;
@@ -697,9 +495,9 @@ body {
     100% { box-shadow: 0 0 15px var(--gold); }
 }
 
-@keyframes pulse {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.6; }
+@keyframes dog-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
 
 @keyframes fadeInOut {
@@ -763,13 +561,23 @@ body {
     }
     
     .dog-container {
-        width: 100px;
-        height: 100px;
+        width: 80px;
+        height: 80px;
         bottom: 15%;
-        right: 5%;
+        right: 3%;
     }
     
     .reel-symbol {
-        font-size: 30px;
+        font-size: 24px;
     }
+    
+    .payline {
+        height: 3px;
+    }
+    
+    #payline1 { top: 16.5%; }
+    #payline2 { top: 50%; }
+    #payline3 { top: 83.5%; }
+    #payline4 { top: 33%; }
+    #payline5 { top: 66%; }
 }
