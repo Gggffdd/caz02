@@ -1,28 +1,25 @@
 import telebot
 from telebot.types import MenuButtonWebApp, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
 
-TOKEN = "7523520150:AAGMPibPAl8D0I0E6ZeNR3zuIp0qKcshXN0"  # Замените на реальный токен от @BotFather
-WEBAPP_URL = "https://benevolent-basbousa-044e27.netlify.app"  # Ваш URL WebApp
+TOKEN = "7523520150:AAGMPibPAl8D0I0E6ZeNR3zuIp0qKcshXN0"
+WEBAPP_URL = "https://benevolent-basbousa-044e27.netlify.app"
 
 bot = telebot.TeleBot(TOKEN)
 
-# Правильный вызов с закрывающими скобками
 bot.set_chat_menu_button(
     menu_button=MenuButtonWebApp(
         type="web_app",
         text="🎰 Dog House Slots",
         web_app=WebAppInfo(url=WEBAPP_URL)
-    )  # Закрывающая скобка для MenuButtonWebApp
-)  # Закрывающая скобка для set_chat_menu_button
+)
 
-# Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     markup = InlineKeyboardMarkup()
     markup.add(InlineKeyboardButton(
         "🎮 Играть в Dog House", 
         web_app=WebAppInfo(url=WEBAPP_URL)
-    ))
+    )
     
     bot.send_message(
         message.chat.id,
