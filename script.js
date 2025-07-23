@@ -58,14 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function handleOrientationChange() {
         const container = document.querySelector('.landscape-container');
-        if (screen.orientation.type.includes('portrait')) {
-            container.style.transform = 'rotate(90deg)';
-            container.style.width = '100vh';
-            container.style.height = '100vw';
+        const warning = document.querySelector('.orientation-warning');
+        
+        if (window.matchMedia("(orientation: portrait)").matches) {
+            container.style.display = 'none';
+            warning.style.display = 'flex';
         } else {
-            container.style.transform = 'rotate(0deg)';
-            container.style.width = '100%';
-            container.style.height = '100%';
+            container.style.display = 'flex';
+            warning.style.display = 'none';
         }
     }
     
