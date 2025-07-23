@@ -26,6 +26,37 @@ body {
     justify-content: center;
     align-items: center;
     position: relative;
+    background: #1a1a2e;
+}
+
+.orientation-warning {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    font-size: 24px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 1000;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.orientation-warning::before {
+    content: "↻";
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: rotate 2s infinite linear;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(90deg); }
 }
 
 .landscape-container {
@@ -38,8 +69,6 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    transform: rotate(0deg);
-    transition: transform 0.5s ease;
 }
 
 .background-sky {
@@ -48,8 +77,71 @@ body {
     left: 0;
     width: 100%;
     height: 50%;
-    background: linear-gradient(to bottom, var(--sky), #5D8AA8);
+    background: linear-gradient(to bottom, #87ceeb, #5D8AA8);
     z-index: -3;
+    overflow: hidden;
+}
+
+.cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    filter: blur(4px);
+    z-index: -2;
+}
+
+.cloud1 {
+    width: 120px;
+    height: 50px;
+    top: 15%;
+    left: -150px;
+    animation: cloud-move 35s linear infinite;
+}
+
+.cloud2 {
+    width: 80px;
+    height: 35px;
+    top: 25%;
+    left: -150px;
+    animation: cloud-move 25s linear infinite;
+    animation-delay: 10s;
+}
+
+.cloud3 {
+    width: 100px;
+    height: 40px;
+    top: 35%;
+    left: -150px;
+    animation: cloud-move 30s linear infinite;
+    animation-delay: 5s;
+}
+
+@keyframes cloud-move {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(150vw); }
+}
+
+.bird {
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path d="M0,25 Q30,0 60,25 T100,25" stroke="black" fill="none" stroke-width="3"/></svg>');
+    background-size: contain;
+    top: 20%;
+    left: -50px;
+    animation: fly 15s linear infinite;
+    z-index: -1;
+}
+
+.bird2 {
+    top: 40%;
+    animation-duration: 20s;
+    animation-delay: 5s;
+}
+
+@keyframes fly {
+    0% { left: -50px; }
+    100% { left: 100%; }
 }
 
 .background-field {
@@ -58,29 +150,119 @@ body {
     left: 0;
     width: 100%;
     height: 50%;
-    background: linear-gradient(to top, var(--field), #388E3C);
+    background: 
+        linear-gradient(to top, #4CAF50, #388E3C),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,50 Q25,30 50,50 T100,50" stroke="%23388E3C" fill="%23388E3C" stroke-width="0"/></svg>');
+    background-blend-mode: multiply;
+    background-size: 300px;
     z-index: -2;
 }
 
-.dog-background {
+.dog-container {
     position: absolute;
     bottom: 20%;
     right: 10%;
-    font-size: 120px;
-    opacity: 0.2;
+    width: 120px;
+    height: 120px;
     z-index: -1;
     animation: dog-bounce 4s infinite ease-in-out;
 }
 
-.animated-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
+.dog {
+    position: relative;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, rgba(46, 196, 182, 0.1) 0%, transparent 70%);
-    animation: pulse 15s infinite alternate;
-    z-index: -1;
+}
+
+.dog-head {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: #d2691e;
+    border-radius: 50%;
+    top: 20px;
+    left: 20px;
+}
+
+.dog-ear {
+    position: absolute;
+    width: 25px;
+    height: 40px;
+    background: #8b4513;
+    border-radius: 50%;
+    top: -10px;
+}
+
+.dog-ear.left {
+    left: 10px;
+    transform: rotate(-20deg);
+}
+
+.dog-ear.right {
+    right: 10px;
+    transform: rotate(20deg);
+}
+
+.dog-eye {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: black;
+    border-radius: 50%;
+    top: 30px;
+}
+
+.dog-eye.left {
+    left: 20px;
+}
+
+.dog-eye.right {
+    right: 20px;
+}
+
+.dog-nose {
+    position: absolute;
+    width: 15px;
+    height: 10px;
+    background: black;
+    border-radius: 50%;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dog-mouth {
+    position: absolute;
+    width: 30px;
+    height: 15px;
+    background: #f5f5dc;
+    border-radius: 0 0 15px 15px;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+}
+
+.dog-tongue {
+    position: absolute;
+    width: 15px;
+    height: 10px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: tongue-move 1.5s infinite alternate;
+}
+
+@keyframes tongue-move {
+    0% { height: 10px; bottom: -5px; }
+    100% { height: 20px; bottom: 0; }
+}
+
+@keyframes dog-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
 
 .particles-container {
@@ -485,22 +667,21 @@ body {
     100% { box-shadow: 0 0 5px var(--gold); }
 }
 
-@keyframes dog-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
-@media (orientation: landscape) {
+@media (orientation: portrait) {
+    .orientation-warning {
+        display: flex;
+    }
     .landscape-container {
-        transform: rotate(0deg);
+        display: none;
     }
 }
 
-@media (orientation: portrait) {
+@media (orientation: landscape) {
+    .orientation-warning {
+        display: none;
+    }
     .landscape-container {
-        transform: rotate(90deg);
-        width: 100vh;
-        height: 100vw;
+        display: flex;
     }
 }
 
@@ -521,5 +702,12 @@ body {
     .spin-btn {
         width: 60px;
         height: 60px;
+    }
+    
+    .dog-container {
+        width: 80px;
+        height: 80px;
+        bottom: 15%;
+        right: 5%;
     }
 }
