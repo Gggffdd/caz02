@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
         balance: config.initialBalance,
         bet: config.betOptions[3],
         spinning: false,
-        currentWin: 0
+        currentWin: 0,
+        spinCount: 0
     };
     
     // Инициализация UI
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('paytable-btn').addEventListener('click', showPaytable);
         document.querySelector('.close').addEventListener('click', hidePaytable);
         document.getElementById('sound-toggle').addEventListener('click', toggleSound);
-        document.querySelector('.mystery-box').addEventListener('click', mysteryBonus);
+        document.getElementById('mystery-box').addEventListener('click', mysteryBonus);
         
         // Инициализируем звук
         setSoundState(config.soundEnabled);
@@ -136,8 +137,10 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState.spinning = true;
         gameState.currentWin = 0;
         gameState.balance -= gameState.bet;
+        gameState.spinCount++;
         updateBalance();
         document.getElementById('win-display').textContent = "0";
+        document.querySelector('.win-crown').style.display = 'none';
         
         // Сбрасываем подсветку символов
         document.querySelectorAll('.reel-symbol').forEach(sym => {
@@ -163,16 +166,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const symbols = reel.querySelectorAll('.reel-symbol');
         const spinDuration = 2000 + Math.random() * 1000;
         const startTime = Date.now();
+        const reelHeight = 100; // 100% на символ
+        
+        // Создаем клоны для бесконечной прокрутки
+        symbols.forEach(symbol => {
+            const clone = symbol.cloneNode(true);
+            clone.style.transform = `translateY(-${reelHeight}%)`;
+            reel.appendChild(clone);
+        });
         
         function animate() {
             const elapsed = Date.now() - startTime;
             const progress = Math.min(elapsed / spinDuration, 1);
+            const easedProgress = 1 - Math.pow(1 - progress, 3); // Кубическое замедление
             
             // Прокрутка символов
-            symbols.forEach(symbol => {
-                const pos = parseInt(symbol.dataset.pos);
-                const newPos = (pos + progress * 20) % 3;
-                symbol.style.transform = `translateY(${newPos * 100}%)`;
+            symbols.forEach((symbol, i) => {
+                const position = -(easedProgress * reelHeight * 3) + (i * reelHeight);
+                symbol.style.transform = `translateY(${position}%)`;
+                
+                // Клоны
+                const clone = reel.children[i + 3];
+                if (clone) {
+                    clone.style.transform = `translateY(${position - reelHeight}%)`;
+                }
             });
             
             if (progress < 1) {
@@ -186,8 +203,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function stopReel(reel, reelIndex) {
+        // Удаляем клоны
+        while (reel.children.length > 3) {
+            reel.removeChild(reel.lastChild);
+        }
+        
         // Выбираем случайную позицию для остановки
-        const stopPos = Math.floor(Math.random() * config.reelStrips[reelIndex].length);
+        const stopPos = Math.floor(Math.random() * (config.reelStrips[reelIndex].length - 2));
         const symbols = reel.querySelectorAll('.reel-symbol');
         
         // Обновляем символы
@@ -196,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const symbolData = config.symbols[config.reelStrips[reelIndex][stripPos]];
             symbol.innerHTML = `<div class="symbol-img" style="color:${symbolData.color}">${symbolData.emoji}</div>`;
             symbol.dataset.symbolId = symbolData.id;
+            symbol.style.transform = `translateY(${symbolIndex * 100}%)`;
         });
         
         // Звук остановки барабана
@@ -204,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Проверяем все ли барабаны остановились
         setTimeout(() => {
             const allStopped = [...document.querySelectorAll('.reel')].every(r => {
-                return r.querySelector('.reel-symbol').style.transform.includes('translateY(0%)');
+                return !r.classList.contains('spinning');
             });
             
             if (allStopped) {
@@ -218,14 +241,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const reels = document.querySelectorAll('.reel');
         const visibleSymbols = [];
         
-        // Собираем видимые символы (центральные позиции)
+        // Собираем видимые символы
         reels.forEach(reel => {
             const symbols = reel.querySelectorAll('.reel-symbol');
-            visibleSymbols.push([
-                parseInt(symbols[0].dataset.symbolId),
-                parseInt(symbols[1].dataset.symbolId),
-                parseInt(symbols[2].dataset.symbolId)
-            ]);
+            const reelSymbols = [];
+            symbols.forEach(sym => {
+                reelSymbols.push(parseInt(sym.dataset.symbolId));
+            });
+            visibleSymbols.push(reelSymbols);
         });
         
         // Проверяем все линии выплат
@@ -250,6 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Анимация выигрыша
             document.getElementById('win-display').textContent = totalWin.toLocaleString();
+            document.querySelector('.win-crown').style.display = 'block';
+            
+            // Большой выигрыш
+            if (totalWin > gameState.bet * 10) {
+                document.querySelector('.win-crown').style.animation = 'bounce 0.5s infinite';
+            }
         }
     }
     
@@ -345,6 +374,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateBetDisplay() {
         document.getElementById('bet').textContent = gameState.bet.toLocaleString();
         document.querySelector('.bet-shadow').textContent = gameState.bet.toLocaleString();
+        
+        // Анимация изменения ставки
+        const betDisplay = document.getElementById('bet');
+        betDisplay.style.transform = 'scale(1.2)';
+        setTimeout(() => {
+            betDisplay.style.transform = 'scale(1)';
+        }, 300);
     }
     
     function initPaytable() {
@@ -370,15 +406,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function showPaytable() {
         document.getElementById('paytable-modal').style.display = 'flex';
+        playSound('bet-sound');
     }
     
     function hidePaytable() {
         document.getElementById('paytable-modal').style.display = 'none';
+        playSound('bet-sound');
     }
     
     function toggleSound() {
         config.soundEnabled = !config.soundEnabled;
         setSoundState(config.soundEnabled);
+        playSound('bet-sound');
     }
     
     function setSoundState(enabled) {
@@ -396,29 +435,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!config.soundEnabled) return;
         const sound = document.getElementById(id);
         sound.currentTime = 0;
-        sound.play();
+        sound.play().catch(e => console.log("Audio play error:", e));
     }
     
     function showMessage(text) {
-        // Реализация показа сообщения (например, временное уведомление)
         const message = document.createElement('div');
+        message.className = 'game-message';
         message.textContent = text;
-        message.style.position = 'fixed';
-        message.style.top = '20px';
-        message.style.left = '50%';
-        message.style.transform = 'translateX(-50%)';
-        message.style.backgroundColor = 'rgba(231, 29, 54, 0.9)';
-        message.style.color = 'white';
-        message.style.padding = '10px 20px';
-        message.style.borderRadius = '20px';
-        message.style.zIndex = '1000';
-        message.style.animation = 'fadeOut 3s forwards';
-        
         document.body.appendChild(message);
         
         setTimeout(() => {
-            message.remove();
-        }, 3000);
+            message.style.opacity = '0';
+            setTimeout(() => {
+                message.remove();
+            }, 500);
+        }, 2500);
     }
     
     function mysteryBonus() {
@@ -435,10 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Анимация бонуса
         const box = document.querySelector('.mystery-box');
-        box.style.animation = 'none';
-        setTimeout(() => {
-            box.style.animation = 'bounce 3s infinite';
-        }, 10);
+        box.style.animation = 'bounce 0.5s';
         
         // Применяем бонус
         switch (bonus.type) {
@@ -458,15 +486,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
                 
             case 'free-spin':
+                showMessage(`${bonus.count} FREE SPINS!`);
                 for (let i = 0; i < bonus.count; i++) {
                     setTimeout(() => {
                         if (!gameState.spinning) startSpin();
                     }, i * 2000);
                 }
-                showMessage(`${bonus.count} FREE SPINS!`);
                 break;
         }
         
-        playSound('win-sound');
+        playSound('bonus-sound');
+        
+        // Сброс анимации
+        setTimeout(() => {
+            box.style.animation = 'bounce 3s infinite';
+        }, 500);
     }
 });
