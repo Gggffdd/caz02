@@ -6,6 +6,8 @@
     --darker: #0D0D1A;
     --light: #FDFFFC;
     --gold: #FFD700;
+    --sky: #87CEEB;
+    --field: #4CAF50;
 }
 
 * {
@@ -23,8 +25,51 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
     position: relative;
+}
+
+.landscape-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transform: rotate(0deg);
+    transition: transform 0.5s ease;
+}
+
+.background-sky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, var(--sky), #5D8AA8);
+    z-index: -3;
+}
+
+.background-field {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, var(--field), #388E3C);
+    z-index: -2;
+}
+
+.dog-background {
+    position: absolute;
+    bottom: 20%;
+    right: 10%;
+    font-size: 120px;
+    opacity: 0.2;
+    z-index: -1;
+    animation: dog-bounce 4s infinite ease-in-out;
 }
 
 .animated-bg {
@@ -35,7 +80,7 @@ body {
     height: 100%;
     background: radial-gradient(circle at center, rgba(46, 196, 182, 0.1) 0%, transparent 70%);
     animation: pulse 15s infinite alternate;
-    z-index: -2;
+    z-index: -1;
 }
 
 .particles-container {
@@ -178,6 +223,19 @@ body {
     animation: symbol-win 0.5s infinite alternate;
 }
 
+.coin-symbol::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 15px;
+    height: 15px;
+    background-color: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 5px var(--gold);
+    animation: coin-glow 1s infinite alternate;
+}
+
 .paylines {
     position: absolute;
     top: 0;
@@ -259,11 +317,28 @@ body {
     align-items: center;
     cursor: pointer;
     font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.spin-btn::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: rotate(45deg);
+    z-index: 1;
 }
 
 .spin-text {
     font-size: 1.1rem;
     text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
 }
 
 .win-display-container {
@@ -287,6 +362,33 @@ body {
     color: var(--gold);
 }
 
+.bonus-display {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--gold);
+    border-radius: 15px;
+    padding: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    z-index: 10;
+    animation: bonus-pulse 2s infinite;
+}
+
+.bonus-spins, .bonus-amount {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: var(--gold);
+}
+
+.bonus-spins i, .bonus-amount i {
+    color: var(--gold);
+}
+
 .win-animation {
     position: fixed;
     top: 0;
@@ -306,6 +408,16 @@ body {
     color: var(--gold);
     text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
     animation: bounce 0.8s infinite;
+}
+
+.coin-value {
+    position: absolute;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--gold);
+    text-shadow: 0 0 5px black;
+    z-index: 5;
+    animation: coin-rise 1.5s forwards;
 }
 
 .game-message {
@@ -355,6 +467,41 @@ body {
     20% { opacity: 1; }
     80% { opacity: 1; }
     100% { opacity: 0; }
+}
+
+@keyframes coin-glow {
+    0% { box-shadow: 0 0 5px var(--gold); }
+    100% { box-shadow: 0 0 15px var(--gold); }
+}
+
+@keyframes coin-rise {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+}
+
+@keyframes bonus-pulse {
+    0% { box-shadow: 0 0 5px var(--gold); }
+    50% { box-shadow: 0 0 20px var(--gold); }
+    100% { box-shadow: 0 0 5px var(--gold); }
+}
+
+@keyframes dog-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@media (orientation: landscape) {
+    .landscape-container {
+        transform: rotate(0deg);
+    }
+}
+
+@media (orientation: portrait) {
+    .landscape-container {
+        transform: rotate(90deg);
+        width: 100vh;
+        height: 100vw;
+    }
 }
 
 @media (max-width: 500px) {
