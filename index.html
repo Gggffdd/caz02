@@ -1,115 +1,314 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dog House Slots</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
+    <title>Dog House Slot Machine</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background-sky"></div>
-    <div class="background-field"></div>
-    
-    <div class="dog-container">
-        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" 
-             alt="Dog" class="dog-image">
-    </div>
-    
-    <div class="particles-container"></div>
-    
     <div class="slot-machine">
-        <div class="gold-frame"></div>
+        <!-- Background elements -->
+        <div class="background">
+            <div class="dog-house"></div>
+            <div class="dogs">
+                <div class="dog sleeping" id="dog1"></div>
+                <div class="dog awake" id="dog2"></div>
+                <div class="dog sleeping" id="dog3"></div>
+            </div>
+            <div class="moon"></div>
+            <div class="stars"></div>
+        </div>
         
-        <div class="header">
-            <div class="logo-container">
-                <div class="logo">
-                    <i class="fas fa-dog"></i>
-                    <span>DOG HOUSE</span>
+        <!-- Main game area -->
+        <div class="game-container">
+            <!-- Reels -->
+            <div class="reels-container">
+                <div class="reel-mask">
+                    <div class="reels">
+                        <div class="reel" id="reel1"></div>
+                        <div class="reel" id="reel2"></div>
+                        <div class="reel" id="reel3"></div>
+                        <div class="reel" id="reel4"></div>
+                        <div class="reel" id="reel5"></div>
+                    </div>
+                </div>
+                
+                <!-- Paylines overlay (20 lines) -->
+                <div class="paylines-overlay">
+                    <svg viewBox="0 0 500 300" preserveAspectRatio="none">
+                        <!-- 20 paylines as SVG paths -->
+                        <path class="payline" id="payline1" d="M50,150 L450,150" data-line="1"></path>
+                        <path class="payline" id="payline2" d="M50,50 L450,50" data-line="2"></path>
+                        <path class="payline" id="payline3" d="M50,250 L450,250" data-line="3"></path>
+                        <path class="payline" id="payline4" d="M50,50 L150,150 L250,50 L350,150 L450,50" data-line="4"></path>
+                        <path class="payline" id="payline5" d="M50,250 L150,150 L250,250 L350,150 L450,250" data-line="5"></path>
+                        <!-- Additional 15 paylines -->
+                        <path class="payline" id="payline6" d="M50,100 L450,100" data-line="6"></path>
+                        <path class="payline" id="payline7" d="M50,200 L450,200" data-line="7"></path>
+                        <path class="payline" id="payline8" d="M50,50 L450,250" data-line="8"></path>
+                        <path class="payline" id="payline9" d="M50,250 L450,50" data-line="9"></path>
+                        <path class="payline" id="payline10" d="M50,150 L150,50 L250,150 L350,50 L450,150" data-line="10"></path>
+                        <path class="payline" id="payline11" d="M50,150 L150,250 L250,150 L350,250 L450,150" data-line="11"></path>
+                        <path class="payline" id="payline12" d="M50,100 L150,100 L250,200 L350,100 L450,100" data-line="12"></path>
+                        <path class="payline" id="payline13" d="M50,200 L150,200 L250,100 L350,200 L450,200" data-line="13"></path>
+                        <path class="payline" id="payline14" d="M50,50 L150,100 L250,50 L350,100 L450,50" data-line="14"></path>
+                        <path class="payline" id="payline15" d="M50,250 L150,200 L250,250 L350,200 L450,250" data-line="15"></path>
+                        <path class="payline" id="payline16" d="M50,100 L250,150 L450,200" data-line="16"></path>
+                        <path class="payline" id="payline17" d="M50,200 L250,150 L450,100" data-line="17"></path>
+                        <path class="payline" id="payline18" d="M50,50 L250,250 L450,50" data-line="18"></path>
+                        <path class="payline" id="payline19" d="M50,250 L250,50 L450,250" data-line="19"></path>
+                        <path class="payline" id="payline20" d="M50,150 L250,50 L450,150" data-line="20"></path>
+                    </svg>
+                </div>
+                
+                <!-- Winning animation elements -->
+                <div class="winning-elements">
+                    <div class="light-beam horizontal" id="light-beam-h"></div>
+                    <div class="light-beam vertical" id="light-beam-v"></div>
+                    <div class="sparkles-container"></div>
                 </div>
             </div>
             
-            <div class="balance-container">
-                <div class="balance-label">BALANCE</div>
-                <div class="balance" id="balance">10,000</div>
-            </div>
-        </div>
-        
-        <!-- Добавлен контейнер для счетчика бонусных спинов -->
-        <div class="bonus-spins-counter" id="bonus-spins-counter">
-            <i class="fas fa-redo"></i>
-            <span id="bonus-spins-left">0</span>
-        </div>
-        
-        <div class="slot-container">
-            <div class="reels-frame">
-                <div class="reels" id="reels"></div>
-            </div>
-            
-            <div class="paylines">
-                <div class="payline" id="payline1"></div>
-                <div class="payline" id="payline2"></div>
-                <div class="payline" id="payline3"></div>
-                <div class="payline" id="payline4"></div>
-                <div class="payline" id="payline5"></div>
-                <div class="payline" id="payline6"></div>
-                <div class="payline" id="payline7"></div>
-                <div class="payline" id="payline8"></div>
-                <div class="payline" id="payline9"></div>
-                <div class="payline" id="payline10"></div>
-            </div>
-        </div>
-        
-        <div class="control-panel">
-            <div class="bet-control">
-                <button class="bet-btn" id="bet-down">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <div class="bet-display-container">
-                    <div class="bet-display" id="bet">100</div>
+            <!-- Control panel -->
+            <div class="control-panel">
+                <div class="info-panel">
+                    <div class="balance-display">
+                        <span class="label">BALANCE</span>
+                        <span class="value" id="balance">1000.00</span>
+                    </div>
+                    <div class="bet-display">
+                        <span class="label">BET</span>
+                        <span class="value" id="bet">1.00</span>
+                    </div>
+                    <div class="win-display">
+                        <span class="label">WIN</span>
+                        <span class="value" id="win">0.00</span>
+                    </div>
                 </div>
-                <button class="bet-btn" id="bet-up">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-            
-            <div class="spin-container">
-                <button class="spin-btn" id="spin-btn">
-                    <div class="spin-text">SPIN</div>
-                </button>
-            </div>
-            
-            <div class="win-display-container">
-                <div class="win-display-label">WIN</div>
-                <div class="win-display" id="win-display">0</div>
-            </div>
-            
-            <div class="bonus-buy-container">
-                <button class="bonus-buy-btn" id="bonus-buy-btn">
-                    <div class="bonus-text">BONUS</div>
-                    <div class="bonus-price" id="bonus-price">5,000</div>
-                </button>
+                
+                <div class="buttons-panel">
+                    <div class="bet-controls">
+                        <button class="btn bet-btn" id="bet-down">-</button>
+                        <div class="bet-slider-container">
+                            <input type="range" min="0.2" max="100" step="0.2" value="1" class="bet-slider" id="bet-slider">
+                            <div class="bet-steps">
+                                <span>0.20</span>
+                                <span>0.50</span>
+                                <span>1</span>
+                                <span>2</span>
+                                <span>5</span>
+                                <span>10</span>
+                                <span>20</span>
+                                <span>50</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+                        <button class="btn bet-btn" id="bet-up">+</button>
+                    </div>
+                    
+                    <div class="main-controls">
+                        <button class="btn spin-btn" id="spin-btn">
+                            <span class="spin-text">SPIN</span>
+                            <span class="spin-arrow">→</span>
+                        </button>
+                        <button class="btn auto-btn" id="auto-btn">AUTO</button>
+                        <div class="auto-menu" id="auto-menu">
+                            <div class="auto-option" data-spins="5">5 Spins</div>
+                            <div class="auto-option" data-spins="10">10 Spins</div>
+                            <div class="auto-option" data-spins="25">25 Spins</div>
+                            <div class="auto-option" data-spins="50">50 Spins</div>
+                            <div class="auto-option" data-spins="100">100 Spins</div>
+                            <div class="auto-option" data-spins="0" data-stop-on-win="20">Stop on any win >20x</div>
+                            <div class="auto-option" data-spins="0" data-stop-on-loss="20">Stop if balance decreases by 20%</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="bonus-display" id="bonus-display">
-            <div class="bonus-amount">
-                <i class="fas fa-coins"></i>
-                <span id="bonus-coins">0</span>
+        <!-- Paytable modal -->
+        <div class="modal" id="paytable-modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>PAYTABLE</h2>
+                <div class="paytable-grid">
+                    <div class="paytable-header">
+                        <div class="symbol-header">Symbol</div>
+                        <div class="pays-header">3 Symbols</div>
+                        <div class="pays-header">4 Symbols</div>
+                        <div class="pays-header">5 Symbols</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-9"></div>9</div>
+                        <div class="pays-cell">0.2x</div>
+                        <div class="pays-cell">0.5x</div>
+                        <div class="pays-cell">1.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-10"></div>10</div>
+                        <div class="pays-cell">0.3x</div>
+                        <div class="pays-cell">0.7x</div>
+                        <div class="pays-cell">1.5x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-j"></div>J</div>
+                        <div class="pays-cell">0.4x</div>
+                        <div class="pays-cell">0.9x</div>
+                        <div class="pays-cell">2.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-q"></div>Q</div>
+                        <div class="pays-cell">0.5x</div>
+                        <div class="pays-cell">1.2x</div>
+                        <div class="pays-cell">2.5x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-k"></div>K</div>
+                        <div class="pays-cell">0.7x</div>
+                        <div class="pays-cell">1.5x</div>
+                        <div class="pays-cell">3.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-a"></div>A</div>
+                        <div class="pays-cell">0.9x</div>
+                        <div class="pays-cell">2.0x</div>
+                        <div class="pays-cell">4.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-collar"></div>Collar</div>
+                        <div class="pays-cell">1.5x</div>
+                        <div class="pays-cell">3.0x</div>
+                        <div class="pays-cell">6.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-bone"></div>Bone</div>
+                        <div class="pays-cell">2.0x</div>
+                        <div class="pays-cell">5.0x</div>
+                        <div class="pays-cell">10.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-bowl"></div>Bowl</div>
+                        <div class="pays-cell">3.0x</div>
+                        <div class="pays-cell">8.0x</div>
+                        <div class="pays-cell">15.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-doghouse"></div>Dog House</div>
+                        <div class="pays-cell">5.0x</div>
+                        <div class="pays-cell">12.0x</div>
+                        <div class="pays-cell">25.0x</div>
+                    </div>
+                    <div class="paytable-row">
+                        <div class="symbol-cell"><div class="symbol symbol-wild"></div>Wild</div>
+                        <div class="pays-cell">1.0x</div>
+                        <div class="pays-cell">2.5x</div>
+                        <div class="pays-cell">5.0x</div>
+                    </div>
+                </div>
+                <div class="paytable-info">
+                    <h3>Special Features</h3>
+                    <div class="feature">
+                        <div class="feature-symbol"><div class="symbol symbol-wild"></div></div>
+                        <div class="feature-desc">
+                            <strong>Wild Symbol:</strong> Substitutes for all symbols except Scatter. Can appear on reels 2, 3 and 4. 
+                            In base game has 50% chance to be x2 or x3 multiplier. In Free Spins always x3.
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-symbol"><div class="symbol symbol-scatter"></div></div>
+                        <div class="feature-desc">
+                            <strong>Scatter Symbol:</strong> 3 or more anywhere trigger Free Spins. Also pays instant win: 
+                            3 scatters = x5, 4 scatters = x20, 5 scatters = x100 of total bet.
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🎁</div>
+                        <div class="feature-desc">
+                            <strong>Free Spins:</strong> 3 Scatters = 12 Free Spins, 4 Scatters = 20 Free Spins, 
+                            5 Scatters = 50 Free Spins. During Free Spins all Wilds become sticky and remain in place until 
+                            Free Spins end. Additional Scatters during Free Spins retrigger more spins.
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🍖</div>
+                        <div class="feature-desc">
+                            <strong>Pick a Bowl Bonus:</strong> During Free Spins, landing 3 Scatters may trigger the Pick a Bowl 
+                            bonus (50% chance). Pick 1 of 3 bowls to reveal a multiplier (x2, x3, x5 or x10) that will be 
+                            applied to your next spin.
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+        
+        <!-- Free Spins intro modal -->
+        <div class="modal fs-intro-modal" id="fs-intro-modal">
+            <div class="modal-content">
+                <h2>FREE SPINS ACTIVATED!</h2>
+                <div class="fs-details">
+                    <div class="fs-count" id="fs-count">12</div>
+                    <div class="fs-text">FREE SPINS</div>
+                </div>
+                <div class="fs-features">
+                    <div class="fs-feature">
+                        <div class="symbol symbol-wild"></div>
+                        <div>All Wilds are x3 and STICKY</div>
+                    </div>
+                    <div class="fs-feature">
+                        <div class="symbol symbol-scatter"></div>
+                        <div>Retrigger more Free Spins</div>
+                    </div>
+                </div>
+                <button class="btn start-fs-btn" id="start-fs-btn">START</button>
+            </div>
+        </div>
+        
+        <!-- Pick a Bowl bonus modal -->
+        <div class="modal bowl-modal" id="bowl-modal">
+            <div class="modal-content">
+                <h2>PICK A BOWL BONUS!</h2>
+                <div class="bowls-container">
+                    <div class="bowl" data-multiplier="2">
+                        <div class="bowl-top">1</div>
+                        <div class="bowl-bottom"></div>
+                    </div>
+                    <div class="bowl" data-multiplier="3">
+                        <div class="bowl-top">2</div>
+                        <div class="bowl-bottom"></div>
+                    </div>
+                    <div class="bowl" data-multiplier="5">
+                        <div class="bowl-top">3</div>
+                        <div class="bowl-bottom"></div>
+                    </div>
+                </div>
+                <div class="bowl-instruction">Select one bowl to reveal your multiplier</div>
+            </div>
+        </div>
+        
+        <!-- Game messages -->
+        <div class="game-message" id="game-message"></div>
+        
+        <!-- Menu buttons -->
+        <div class="menu-buttons">
+            <button class="menu-btn" id="paytable-btn">PAYTABLE</button>
+            <button class="menu-btn" id="sound-btn">SOUND: ON</button>
+            <button class="menu-btn" id="settings-btn">SETTINGS</button>
         </div>
     </div>
     
-    <audio id="spin-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-slot-machine-spin-1080.mp3" preload="auto"></audio>
-    <audio id="win-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
-    <audio id="reel-stop-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
-    <audio id="bet-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
-    <audio id="bonus-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" preload="auto"></audio>
-    <audio id="coin-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-coins-handling-1935.mp3" preload="auto"></audio>
-    
-    <div class="win-animation" id="win-animation"></div>
+    <!-- Audio elements -->
+    <audio id="reel-spin" loop src="sounds/reel_spin.mp3"></audio>
+    <audio id="reel-stop" src="sounds/reel_stop.mp3"></audio>
+    <audio id="win-sound" src="sounds/win.mp3"></audio>
+    <audio id="big-win-sound" src="sounds/big_win.mp3"></audio>
+    <audio id="scatter-sound" src="sounds/scatter.mp3"></audio>
+    <audio id="wild-sound" src="sounds/wild.mp3"></audio>
+    <audio id="bg-music" loop src="sounds/bg_music.mp3"></audio>
+    <audio id="fs-music" loop src="sounds/fs_music.mp3"></audio>
+    <audio id="bonus-sound" src="sounds/bonus.mp3"></audio>
+    <audio id="button-sound" src="sounds/button.mp3"></audio>
     
     <script src="script.js"></script>
 </body>
