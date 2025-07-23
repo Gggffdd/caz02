@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
         bonus: {
             active: false,
             spinsLeft: 0,
-            coins: []
+            coins: [],
+            coinPositions: new Set() // Для отслеживания позиций выпавших монет
         }
     };
     
@@ -127,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         gameState.spinning = true;
         gameState.currentWin = 0;
+        gameState.bonus.coinPositions.clear(); // Сбрасываем позиции монет
         
         if (!gameState.bonus.active) {
             gameState.balance -= gameState.bet;
@@ -150,19 +152,48 @@ document.addEventListener('DOMContentLoaded', () => {
         
         symbols.forEach((symbol, index) => {
             setTimeout(() => {
-                animateSymbol(symbol, index, () => {
-                    completed++;
-                    if (completed === 9) {
-                        gameState.spinning = false;
-                        checkWins();
-                    }
-                });
-            }, index * 100);
+                // Для третьего барабана добавляем замедление, если на первых двух есть монеты
+                const reelIndex = parseInt(symbol.dataset.reel);
+                let delay = 100;
+                let duration = 0.6;
+                
+                if (reelIndex === 2 && shouldSlowDownThirdReel()) {
+                    delay = 300;
+                    duration = 1.2;
+                }
+                
+                setTimeout(() => {
+                    animateSymbol(symbol, duration, () => {
+                        completed++;
+                        if (completed === 9) {
+                            gameState.spinning = false;
+                            checkWins();
+                        }
+                    });
+                }, index * delay);
+            }, 0);
         });
     }
     
-    function animateSymbol(symbol, index, callback) {
+    function shouldSlowDownThirdReel() {
+        // Проверяем, есть ли монеты на первых двух барабанах
+        const reels = document.querySelectorAll('.reel');
+        for (let i = 0; i < 2; i++) {
+            let hasCoin = false;
+            const symbols = reels[i].querySelectorAll('.reel-symbol');
+            symbols.forEach(sym => {
+                if (parseInt(sym.dataset.symbolId) === 8) {
+                    hasCoin = true;
+                }
+            });
+            if (!hasCoin) return false;
+        }
+        return true;
+    }
+    
+    function animateSymbol(symbol, duration, callback) {
         const reelIndex = parseInt(symbol.dataset.reel);
+        const posIndex = parseInt(symbol.dataset.pos);
         const strip = config.reelStrips[reelIndex];
         const randomIndex = Math.floor(Math.random() * strip.length);
         const symbolData = config.symbols[strip[randomIndex]];
@@ -180,13 +211,13 @@ document.addEventListener('DOMContentLoaded', () => {
         symbol.style.transform = 'translateY(-150%)';
         
         setTimeout(() => {
-            symbol.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            symbol.style.transition = `transform ${duration}s cubic-bezier(0.34, 1.56, 0.64, 1)`;
             symbol.style.transform = 'translateY(0)';
             
             setTimeout(() => {
                 playSound('reel-stop-sound');
                 if (callback) callback();
-            }, 600);
+            }, duration * 1000);
         }, 10);
     }
     
@@ -206,11 +237,25 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalWin = 0;
         let bonusTriggered = false;
         
-        // Проверка бонуса (3 монетки на центральной линии)
-        const centerLine = [visibleSymbols[0][1], visibleSymbols[1][1], visibleSymbols[2][1]];
-        if (centerLine.every(sym => sym === 8)) {
+        // Проверка бонуса (монетки на любых позициях)
+        const coins = [];
+        for (let col = 0; col < 3; col++) {
+            for (let row = 0; row < 3; row++) {
+                if (visibleSymbols[col][row] === 8) {
+                    coins.push({col, row});
+                }
+            }
+        }
+        
+        // Активируем бонус, если есть хотя бы 1 монета
+        if (coins.length > 0 && !gameState.bonus.active) {
             activateBonus();
             bonusTriggered = true;
+        }
+        
+        // Собираем монетки в бонусном режиме
+        if (gameState.bonus.active) {
+            collectBonusCoins(coins);
         }
         
         // Проверка обычных выигрышей
@@ -223,11 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 highlightPayline(lineIndex, line);
             }
         });
-        
-        // Проверка монеток в бонусном режиме
-        if (gameState.bonus.active && !bonusTriggered) {
-            collectBonusCoins(visibleSymbols);
-        }
         
         if (totalWin > 0) {
             gameState.currentWin = totalWin;
@@ -273,29 +313,27 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState.bonus.coins = [];
         
         document.getElementById('bonus-display').style.display = 'flex';
+        document.getElementById('bonus-spins-counter').style.display = 'flex';
         updateBonusDisplay();
         
         playSound('bonus-sound');
         showMessage("БОНУС! 5 бесплатных вращений!");
     }
     
-    function collectBonusCoins(visibleSymbols) {
-        for (let col = 0; col < 3; col++) {
-            for (let row = 0; row < 3; row++) {
-                if (visibleSymbols[col][row] === 8) {
-                    const coinValue = Math.floor(Math.random() * 5 + 1) * gameState.bet * 5;
-                    gameState.bonus.coins.push(coinValue);
-                    
-                    const symbolElement = document.querySelector(
-                        `#reel-${col} .reel-symbol:nth-child(${row + 1})`
-                    );
-                    
-                    if (symbolElement) {
-                        showCoinValue(symbolElement, coinValue);
-                    }
-                }
+    function collectBonusCoins(coins) {
+        coins.forEach(coin => {
+            const {col, row} = coin;
+            const coinValue = Math.floor(Math.random() * 5 + 1) * gameState.bet * 5;
+            gameState.bonus.coins.push(coinValue);
+            
+            const symbolElement = document.querySelector(
+                `#reel-${col} .reel-symbol:nth-child(${row + 1})`
+            );
+            
+            if (symbolElement) {
+                showCoinValue(symbolElement, coinValue);
             }
-        }
+        });
         
         gameState.bonus.spinsLeft--;
         updateBonusDisplay();
@@ -326,6 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         gameState.bonus.active = false;
         document.getElementById('bonus-display').style.display = 'none';
+        document.getElementById('bonus-spins-counter').style.display = 'none';
     }
     
     function updateBonusDisplay() {
@@ -347,9 +386,58 @@ document.addEventListener('DOMContentLoaded', () => {
         
         gameState.balance -= bonusCost;
         updateBalance();
-        activateBonus();
+        
+        // Специальный спин с гарантированными 3 монетами
+        gameState.spinning = true;
         playSound('bonus-sound');
-        showMessage("Бонус куплен! Начинаем бесплатные вращения!");
+        
+        const symbols = document.querySelectorAll('.reel-symbol');
+        let completed = 0;
+        
+        symbols.forEach((symbol, index) => {
+            setTimeout(() => {
+                const reelIndex = parseInt(symbol.dataset.reel);
+                const posIndex = parseInt(symbol.dataset.pos);
+                
+                // Гарантируем выпадение монет на всех барабанах
+                let symbolData;
+                if (posIndex === 1) { // Центральная позиция
+                    symbolData = config.symbols[8]; // Монета
+                } else {
+                    const strip = config.reelStrips[reelIndex];
+                    const randomIndex = Math.floor(Math.random() * strip.length);
+                    symbolData = config.symbols[strip[randomIndex]];
+                }
+                
+                symbol.innerHTML = `<div class="symbol-img" style="color:${symbolData.color}">${symbolData.emoji}</div>`;
+                symbol.dataset.symbolId = symbolData.id;
+                
+                if (symbolData.bonus) {
+                    symbol.classList.add('coin-symbol');
+                } else {
+                    symbol.classList.remove('coin-symbol');
+                }
+                
+                symbol.style.transition = 'none';
+                symbol.style.transform = 'translateY(-150%)';
+                
+                setTimeout(() => {
+                    symbol.style.transition = `transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)`;
+                    symbol.style.transform = 'translateY(0)';
+                    
+                    setTimeout(() => {
+                        playSound('reel-stop-sound');
+                        completed++;
+                        
+                        if (completed === 9) {
+                            gameState.spinning = false;
+                            activateBonus();
+                            checkWins();
+                        }
+                    }, 600);
+                }, 10);
+            }, index * 100);
+        });
     }
     
     function animateWin(amount) {
