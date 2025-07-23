@@ -14,9 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 8, name: "Coin", emoji: "🪙", payout: [0, 0, 0, 0], color: "#FFD700", bonus: true }
         ],
         paylines: [
-            [0, 0, 0],
-            [1, 1, 1],
-            [2, 2, 2]
+            [0, 0, 0], // Top horizontal
+            [1, 1, 1], // Middle horizontal
+            [2, 2, 2], // Bottom horizontal
+            [0, 1, 2], // Diagonal top-left to bottom-right
+            [2, 1, 0]  // Diagonal bottom-left to top-right
         ],
         reelStrips: [
             [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 8],
@@ -263,12 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function highlightPayline(lineIndex, positions) {
         const payline = document.getElementById(`payline${lineIndex + 1}`);
-        payline.classList.add('active');
+        if (payline) payline.classList.add('active');
         
         positions.forEach((row, col) => {
             const reel = document.querySelector(`#reel-${col}`);
-            const symbol = reel.querySelector(`.reel-symbol:nth-child(${row + 1})`);
-            symbol.classList.add('win-symbol');
+            if (reel) {
+                const symbol = reel.querySelector(`.reel-symbol:nth-child(${row + 1})`);
+                if (symbol) symbol.classList.add('win-symbol');
+            }
         });
     }
     
@@ -296,7 +300,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         `#reel-${col} .reel-symbol:nth-child(${row + 1})`
                     );
                     
-                    showCoinValue(symbolElement, coinValue);
+                    if (symbolElement) {
+                        showCoinValue(symbolElement, coinValue);
+                    }
                 }
             }
         }
