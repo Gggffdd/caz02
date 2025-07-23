@@ -6,19 +6,47 @@
     <title>Dog House Slot Machine</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="slot-machine">
         <!-- Background elements -->
         <div class="background">
-            <div class="dog-house"></div>
-            <div class="dogs">
-                <div class="dog sleeping" id="dog1"></div>
-                <div class="dog awake" id="dog2"></div>
-                <div class="dog sleeping" id="dog3"></div>
+            <div class="dog-house">
+                <div class="roof"></div>
+                <div class="door"></div>
+                <div class="windows">
+                    <div class="window"></div>
+                    <div class="window"></div>
+                </div>
             </div>
-            <div class="moon"></div>
-            <div class="stars"></div>
+            <div class="dogs">
+                <div class="dog sleeping" id="dog1">
+                    <div class="ear"></div>
+                    <div class="eye"></div>
+                </div>
+                <div class="dog awake" id="dog2">
+                    <div class="ear"></div>
+                    <div class="eye"></div>
+                </div>
+                <div class="dog sleeping" id="dog3">
+                    <div class="ear"></div>
+                    <div class="eye"></div>
+                </div>
+            </div>
+            <div class="moon">
+                <div class="crater"></div>
+                <div class="crater"></div>
+                <div class="crater"></div>
+            </div>
+            <div class="stars">
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+            </div>
+            <div class="grass"></div>
         </div>
         
         <!-- Main game area -->
@@ -35,31 +63,14 @@
                     </div>
                 </div>
                 
-                <!-- Paylines overlay (20 lines) -->
+                <!-- Paylines overlay -->
                 <div class="paylines-overlay">
                     <svg viewBox="0 0 500 300" preserveAspectRatio="none">
-                        <!-- 20 paylines as SVG paths -->
                         <path class="payline" id="payline1" d="M50,150 L450,150" data-line="1"></path>
                         <path class="payline" id="payline2" d="M50,50 L450,50" data-line="2"></path>
                         <path class="payline" id="payline3" d="M50,250 L450,250" data-line="3"></path>
                         <path class="payline" id="payline4" d="M50,50 L150,150 L250,50 L350,150 L450,50" data-line="4"></path>
                         <path class="payline" id="payline5" d="M50,250 L150,150 L250,250 L350,150 L450,250" data-line="5"></path>
-                        <!-- Additional 15 paylines -->
-                        <path class="payline" id="payline6" d="M50,100 L450,100" data-line="6"></path>
-                        <path class="payline" id="payline7" d="M50,200 L450,200" data-line="7"></path>
-                        <path class="payline" id="payline8" d="M50,50 L450,250" data-line="8"></path>
-                        <path class="payline" id="payline9" d="M50,250 L450,50" data-line="9"></path>
-                        <path class="payline" id="payline10" d="M50,150 L150,50 L250,150 L350,50 L450,150" data-line="10"></path>
-                        <path class="payline" id="payline11" d="M50,150 L150,250 L250,150 L350,250 L450,150" data-line="11"></path>
-                        <path class="payline" id="payline12" d="M50,100 L150,100 L250,200 L350,100 L450,100" data-line="12"></path>
-                        <path class="payline" id="payline13" d="M50,200 L150,200 L250,100 L350,200 L450,200" data-line="13"></path>
-                        <path class="payline" id="payline14" d="M50,50 L150,100 L250,50 L350,100 L450,50" data-line="14"></path>
-                        <path class="payline" id="payline15" d="M50,250 L150,200 L250,250 L350,200 L450,250" data-line="15"></path>
-                        <path class="payline" id="payline16" d="M50,100 L250,150 L450,200" data-line="16"></path>
-                        <path class="payline" id="payline17" d="M50,200 L250,150 L450,100" data-line="17"></path>
-                        <path class="payline" id="payline18" d="M50,50 L250,250 L450,50" data-line="18"></path>
-                        <path class="payline" id="payline19" d="M50,250 L250,50 L450,250" data-line="19"></path>
-                        <path class="payline" id="payline20" d="M50,150 L250,50 L450,150" data-line="20"></path>
                     </svg>
                 </div>
                 
@@ -90,7 +101,9 @@
                 
                 <div class="buttons-panel">
                     <div class="bet-controls">
-                        <button class="btn bet-btn" id="bet-down">-</button>
+                        <button class="btn bet-btn" id="bet-down">
+                            <i class="fas fa-minus"></i>
+                        </button>
                         <div class="bet-slider-container">
                             <input type="range" min="0.2" max="100" step="0.2" value="1" class="bet-slider" id="bet-slider">
                             <div class="bet-steps">
@@ -105,7 +118,9 @@
                                 <span>100</span>
                             </div>
                         </div>
-                        <button class="btn bet-btn" id="bet-up">+</button>
+                        <button class="btn bet-btn" id="bet-up">
+                            <i class="fas fa-plus"></i>
+                        </button>
                     </div>
                     
                     <div class="main-controls">
@@ -120,8 +135,8 @@
                             <div class="auto-option" data-spins="25">25 Spins</div>
                             <div class="auto-option" data-spins="50">50 Spins</div>
                             <div class="auto-option" data-spins="100">100 Spins</div>
-                            <div class="auto-option" data-spins="0" data-stop-on-win="20">Stop on any win >20x</div>
-                            <div class="auto-option" data-spins="0" data-stop-on-loss="20">Stop if balance decreases by 20%</div>
+                            <div class="auto-option" data-stop-on-win="20">Stop on any win >20x</div>
+                            <div class="auto-option" data-stop-on-loss="20">Stop if balance decreases by 20%</div>
                         </div>
                     </div>
                 </div>
@@ -231,14 +246,6 @@
                             Free Spins end. Additional Scatters during Free Spins retrigger more spins.
                         </div>
                     </div>
-                    <div class="feature">
-                        <div class="feature-icon">🍖</div>
-                        <div class="feature-desc">
-                            <strong>Pick a Bowl Bonus:</strong> During Free Spins, landing 3 Scatters may trigger the Pick a Bowl 
-                            bonus (50% chance). Pick 1 of 3 bowls to reveal a multiplier (x2, x3, x5 or x10) that will be 
-                            applied to your next spin.
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -265,36 +272,20 @@
             </div>
         </div>
         
-        <!-- Pick a Bowl bonus modal -->
-        <div class="modal bowl-modal" id="bowl-modal">
-            <div class="modal-content">
-                <h2>PICK A BOWL BONUS!</h2>
-                <div class="bowls-container">
-                    <div class="bowl" data-multiplier="2">
-                        <div class="bowl-top">1</div>
-                        <div class="bowl-bottom"></div>
-                    </div>
-                    <div class="bowl" data-multiplier="3">
-                        <div class="bowl-top">2</div>
-                        <div class="bowl-bottom"></div>
-                    </div>
-                    <div class="bowl" data-multiplier="5">
-                        <div class="bowl-top">3</div>
-                        <div class="bowl-bottom"></div>
-                    </div>
-                </div>
-                <div class="bowl-instruction">Select one bowl to reveal your multiplier</div>
-            </div>
-        </div>
-        
         <!-- Game messages -->
         <div class="game-message" id="game-message"></div>
         
         <!-- Menu buttons -->
         <div class="menu-buttons">
-            <button class="menu-btn" id="paytable-btn">PAYTABLE</button>
-            <button class="menu-btn" id="sound-btn">SOUND: ON</button>
-            <button class="menu-btn" id="settings-btn">SETTINGS</button>
+            <button class="menu-btn" id="paytable-btn">
+                <i class="fas fa-table"></i> PAYTABLE
+            </button>
+            <button class="menu-btn" id="sound-btn">
+                <i class="fas fa-volume-up"></i> SOUND: ON
+            </button>
+            <button class="menu-btn" id="reset-btn">
+                <i class="fas fa-redo"></i> RESET
+            </button>
         </div>
     </div>
     
