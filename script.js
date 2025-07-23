@@ -6,14 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Конфигурация игры
     const config = {
         symbols: [
-            { id: 0, name: "A", img: "A.png", payout: [0, 5, 25, 100] },
-            { id: 1, name: "K", img: "K.png", payout: [0, 4, 20, 75] },
-            { id: 2, name: "Q", img: "Q.png", payout: [0, 3, 15, 50] },
-            { id: 3, name: "J", img: "J.png", payout: [0, 2, 10, 25] },
-            { id: 4, name: "10", img: "10.png", payout: [0, 1, 5, 15] },
-            { id: 5, name: "Dog", img: "dog.png", payout: [0, 10, 50, 200] },
-            { id: 6, name: "Bone", img: "bone.png", payout: [0, 15, 75, 300] },
-            { id: 7, name: "House", img: "house.png", payout: [0, 20, 100, 500] }
+            { id: 0, name: "A", emoji: "♦", payout: [0, 5, 25, 100], color: "#FF6B6B" },
+            { id: 1, name: "K", emoji: "♠", payout: [0, 4, 20, 75], color: "#4ECDC4" },
+            { id: 2, name: "Q", emoji: "♥", payout: [0, 3, 15, 50], color: "#FF9F1C" },
+            { id: 3, name: "J", emoji: "♣", payout: [0, 2, 10, 25], color: "#1A936F" },
+            { id: 4, name: "10", emoji: "🔔", payout: [0, 1, 5, 15], color: "#C5D86D" },
+            { id: 5, name: "Dog", emoji: "🐶", payout: [0, 10, 50, 200], color: "#FFD166" },
+            { id: 6, name: "Bone", emoji: "🦴", payout: [0, 15, 75, 300], color: "#F7F7F7" },
+            { id: 7, name: "House", emoji: "🏠", payout: [0, 20, 100, 500], color: "#118AB2" }
         ],
         paylines: [
             [0, 0, 0], // Верхняя линия
@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
             [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5]
         ],
         betOptions: [10, 25, 50, 100, 250, 500],
-        initialBalance: 10000
+        initialBalance: 10000,
+        soundEnabled: true
     };
     
     // Состояние игры
@@ -44,32 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initGame();
     
     function initGame() {
-        // Создаем барабаны
-        const reelsContainer = document.getElementById('reels');
-        reelsContainer.innerHTML = '';
+        // Создаем частицы фона
+        createParticles();
         
-        for (let i = 0; i < 3; i++) {
-            const reel = document.createElement('div');
-            reel.className = 'reel';
-            reel.id = `reel-${i}`;
-            
-            // Создаем 3 видимых символа + 2 скрытых для анимации
-            for (let j = 0; j < 5; j++) {
-                const symbol = document.createElement('div');
-                symbol.className = 'reel-symbol';
-                symbol.dataset.pos = j;
-                symbol.dataset.reel = i;
-                
-                // Заполняем начальными символами
-                const symbolIndex = config.reelStrips[i][j];
-                const symbolData = config.symbols[symbolIndex];
-                symbol.innerHTML = `<img src="assets/images/symbols/${symbolData.img}" alt="${symbolData.name}">`;
-                
-                reel.appendChild(symbol);
-            }
-            
-            reelsContainer.appendChild(reel);
-        }
+        // Создаем барабаны
+        initReels();
         
         // Обновляем UI
         updateBalance();
@@ -82,6 +62,68 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('bet-down').addEventListener('click', decreaseBet);
         document.getElementById('paytable-btn').addEventListener('click', showPaytable);
         document.querySelector('.close').addEventListener('click', hidePaytable);
+        document.getElementById('sound-toggle').addEventListener('click', toggleSound);
+        document.querySelector('.mystery-box').addEventListener('click', mysteryBonus);
+        
+        // Инициализируем звук
+        setSoundState(config.soundEnabled);
+    }
+    
+    function createParticles() {
+        const container = document.querySelector('.particles-container');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Случайные свойства
+            const size = Math.random() * 10 + 5;
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+            const duration = Math.random() * 20 + 10;
+            const delay = Math.random() * 10;
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${posX}%`;
+            particle.style.top = `${posY}%`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+            
+            // Случайный цвет
+            const colors = ['#FF9F1C', '#2EC4B6', '#E71D36', '#FFD700'];
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            container.appendChild(particle);
+        }
+    }
+    
+    function initReels() {
+        const reelsContainer = document.getElementById('reels');
+        reelsContainer.innerHTML = '';
+        
+        for (let i = 0; i < 3; i++) {
+            const reel = document.createElement('div');
+            reel.className = 'reel';
+            reel.id = `reel-${i}`;
+            
+            // Создаем 3 видимых символа
+            for (let j = 0; j < 3; j++) {
+                const symbol = document.createElement('div');
+                symbol.className = 'reel-symbol';
+                symbol.dataset.pos = j;
+                symbol.dataset.reel = i;
+                
+                // Заполняем начальными символами
+                const symbolIndex = config.reelStrips[i][j];
+                const symbolData = config.symbols[symbolIndex];
+                symbol.innerHTML = `<div class="symbol-img" style="color:${symbolData.color}">${symbolData.emoji}</div>`;
+                symbol.dataset.symbolId = symbolData.id;
+                
+                reel.appendChild(symbol);
+            }
+            
+            reelsContainer.appendChild(reel);
+        }
     }
     
     function startSpin() {
@@ -97,9 +139,18 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBalance();
         document.getElementById('win-display').textContent = "0";
         
+        // Сбрасываем подсветку символов
+        document.querySelectorAll('.reel-symbol').forEach(sym => {
+            sym.classList.remove('win-symbol');
+        });
+        
+        // Сбрасываем линии выплат
+        document.querySelectorAll('.payline').forEach(line => {
+            line.classList.remove('active');
+        });
+        
         // Запускаем звук вращения
-        document.getElementById('spin-sound').currentTime = 0;
-        document.getElementById('spin-sound').play();
+        playSound('spin-sound');
         
         // Анимация вращения для каждого барабана
         const reels = document.querySelectorAll('.reel');
@@ -120,8 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Прокрутка символов
             symbols.forEach(symbol => {
                 const pos = parseInt(symbol.dataset.pos);
-                const newPos = (pos + progress * 50) % 5;
-                symbol.style.transform = `translateY(${newPos * 100}px)`;
+                const newPos = (pos + progress * 20) % 3;
+                symbol.style.transform = `translateY(${newPos * 100}%)`;
             });
             
             if (progress < 1) {
@@ -143,18 +194,17 @@ document.addEventListener('DOMContentLoaded', () => {
         symbols.forEach((symbol, symbolIndex) => {
             const stripPos = (stopPos + symbolIndex) % config.reelStrips[reelIndex].length;
             const symbolData = config.symbols[config.reelStrips[reelIndex][stripPos]];
-            symbol.innerHTML = `<img src="assets/images/symbols/${symbolData.img}" alt="${symbolData.name}">`;
+            symbol.innerHTML = `<div class="symbol-img" style="color:${symbolData.color}">${symbolData.emoji}</div>`;
             symbol.dataset.symbolId = symbolData.id;
         });
         
         // Звук остановки барабана
-        document.getElementById('reel-stop-sound').currentTime = 0;
-        document.getElementById('reel-stop-sound').play();
+        playSound('reel-stop-sound');
         
         // Проверяем все ли барабаны остановились
         setTimeout(() => {
             const allStopped = [...document.querySelectorAll('.reel')].every(r => {
-                return !r.querySelector('.reel-symbol').style.transform.includes('translateY');
+                return r.querySelector('.reel-symbol').style.transform.includes('translateY(0%)');
             });
             
             if (allStopped) {
@@ -186,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (win > 0) {
                 totalWin += win;
-                highlightPayline(lineIndex);
+                highlightPayline(lineIndex, line);
             }
         });
         
@@ -195,10 +245,11 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.balance += totalWin;
             updateBalance();
             
-            document.getElementById('win-sound').currentTime = 0;
-            document.getElementById('win-sound').play();
-            
+            playSound('win-sound');
             animateWin(totalWin);
+            
+            // Анимация выигрыша
+            document.getElementById('win-display').textContent = totalWin.toLocaleString();
         }
     }
     
@@ -219,5 +270,203 @@ document.addEventListener('DOMContentLoaded', () => {
         return 0;
     }
     
-    // ... (остальные функции для управления ставками, выплатами и UI)
+    function highlightPayline(lineIndex, positions) {
+        // Активируем линию выплат
+        const payline = document.getElementById(`payline${lineIndex + 1}`);
+        payline.classList.add('active');
+        
+        // Подсвечиваем выигравшие символы
+        positions.forEach((row, col) => {
+            const reel = document.querySelector(`#reel-${col}`);
+            const symbol = reel.querySelector(`.reel-symbol:nth-child(${row + 1})`);
+            symbol.classList.add('win-symbol');
+        });
+    }
+    
+    function animateWin(amount) {
+        const winAnimation = document.getElementById('win-animation');
+        winAnimation.style.display = 'block';
+        winAnimation.innerHTML = '';
+        
+        // Создаем элементы анимации
+        for (let i = 0; i < 50; i++) {
+            const coin = document.createElement('div');
+            coin.innerHTML = '🪙';
+            coin.style.position = 'absolute';
+            coin.style.fontSize = '3rem';
+            coin.style.left = `${Math.random() * 100}%`;
+            coin.style.top = `${Math.random() * 100}%`;
+            coin.style.animation = `float ${Math.random() * 3 + 2}s linear forwards`;
+            winAnimation.appendChild(coin);
+        }
+        
+        // Создаем текст выигрыша
+        const winText = document.createElement('div');
+        winText.textContent = `WIN ${amount.toLocaleString()}!`;
+        winText.style.position = 'absolute';
+        winText.style.top = '50%';
+        winText.style.left = '50%';
+        winText.style.transform = 'translate(-50%, -50%)';
+        winText.style.fontSize = '4rem';
+        winText.style.fontWeight = 'bold';
+        winText.style.color = 'gold';
+        winText.style.textShadow = '0 0 20px rgba(255,215,0,0.8)';
+        winText.style.animation = 'bounce 1s infinite';
+        winAnimation.appendChild(winText);
+        
+        // Через 3 секунды скрываем анимацию
+        setTimeout(() => {
+            winAnimation.style.display = 'none';
+        }, 3000);
+    }
+    
+    function increaseBet() {
+        playSound('bet-sound');
+        const currentIndex = config.betOptions.indexOf(gameState.bet);
+        if (currentIndex < config.betOptions.length - 1) {
+            gameState.bet = config.betOptions[currentIndex + 1];
+            updateBetDisplay();
+        }
+    }
+    
+    function decreaseBet() {
+        playSound('bet-sound');
+        const currentIndex = config.betOptions.indexOf(gameState.bet);
+        if (currentIndex > 0) {
+            gameState.bet = config.betOptions[currentIndex - 1];
+            updateBetDisplay();
+        }
+    }
+    
+    function updateBalance() {
+        document.getElementById('balance').textContent = gameState.balance.toLocaleString();
+    }
+    
+    function updateBetDisplay() {
+        document.getElementById('bet').textContent = gameState.bet.toLocaleString();
+        document.querySelector('.bet-shadow').textContent = gameState.bet.toLocaleString();
+    }
+    
+    function initPaytable() {
+        const paytable = document.getElementById('paytable');
+        paytable.innerHTML = '';
+        
+        config.symbols.forEach(symbol => {
+            const item = document.createElement('div');
+            item.className = 'paytable-item';
+            
+            item.innerHTML = `
+                <div class="symbol-img" style="color:${symbol.color}">${symbol.emoji}</div>
+                <div class="symbol-name">${symbol.name}</div>
+                <div class="symbol-payout">
+                    3x: ${symbol.payout[3]}x<br>
+                    2x: ${symbol.payout[1]}x
+                </div>
+            `;
+            
+            paytable.appendChild(item);
+        });
+    }
+    
+    function showPaytable() {
+        document.getElementById('paytable-modal').style.display = 'flex';
+    }
+    
+    function hidePaytable() {
+        document.getElementById('paytable-modal').style.display = 'none';
+    }
+    
+    function toggleSound() {
+        config.soundEnabled = !config.soundEnabled;
+        setSoundState(config.soundEnabled);
+    }
+    
+    function setSoundState(enabled) {
+        const icon = document.querySelector('#sound-toggle i');
+        if (enabled) {
+            icon.className = 'fas fa-volume-up';
+            icon.style.color = '#2EC4B6';
+        } else {
+            icon.className = 'fas fa-volume-mute';
+            icon.style.color = '#E71D36';
+        }
+    }
+    
+    function playSound(id) {
+        if (!config.soundEnabled) return;
+        const sound = document.getElementById(id);
+        sound.currentTime = 0;
+        sound.play();
+    }
+    
+    function showMessage(text) {
+        // Реализация показа сообщения (например, временное уведомление)
+        const message = document.createElement('div');
+        message.textContent = text;
+        message.style.position = 'fixed';
+        message.style.top = '20px';
+        message.style.left = '50%';
+        message.style.transform = 'translateX(-50%)';
+        message.style.backgroundColor = 'rgba(231, 29, 54, 0.9)';
+        message.style.color = 'white';
+        message.style.padding = '10px 20px';
+        message.style.borderRadius = '20px';
+        message.style.zIndex = '1000';
+        message.style.animation = 'fadeOut 3s forwards';
+        
+        document.body.appendChild(message);
+        
+        setTimeout(() => {
+            message.remove();
+        }, 3000);
+    }
+    
+    function mysteryBonus() {
+        if (gameState.spinning) return;
+        
+        // Случайный бонус
+        const bonuses = [
+            { type: 'cash', amount: 500 },
+            { type: 'multiplier', value: 2 },
+            { type: 'free-spin', count: 5 }
+        ];
+        
+        const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+        
+        // Анимация бонуса
+        const box = document.querySelector('.mystery-box');
+        box.style.animation = 'none';
+        setTimeout(() => {
+            box.style.animation = 'bounce 3s infinite';
+        }, 10);
+        
+        // Применяем бонус
+        switch (bonus.type) {
+            case 'cash':
+                gameState.balance += bonus.amount;
+                updateBalance();
+                showMessage(`+${bonus.amount} BONUS!`);
+                break;
+                
+            case 'multiplier':
+                gameState.bet *= bonus.value;
+                if (gameState.bet > config.betOptions[config.betOptions.length - 1]) {
+                    gameState.bet = config.betOptions[config.betOptions.length - 1];
+                }
+                updateBetDisplay();
+                showMessage(`BET x${bonus.value} MULTIPLIER!`);
+                break;
+                
+            case 'free-spin':
+                for (let i = 0; i < bonus.count; i++) {
+                    setTimeout(() => {
+                        if (!gameState.spinning) startSpin();
+                    }, i * 2000);
+                }
+                showMessage(`${bonus.count} FREE SPINS!`);
+                break;
+        }
+        
+        playSound('win-sound');
+    }
 });
