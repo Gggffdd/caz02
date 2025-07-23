@@ -6,12 +6,12 @@ WEBAPP_URL = "https://benevolent-basbousa-044e27.netlify.app"
 
 bot = telebot.TeleBot(TOKEN)
 
-# Устанавливаем кнопку меню
+# Устанавливаем кнопку меню (исправленная версия)
 bot.set_chat_menu_button(
     menu_button=MenuButtonWebApp(
+        type="web_app",
         text="🎰 Dog House Slots",
         web_app=WebAppInfo(url=WEBAPP_URL)
-    )
 )
 
 # Создаем inline-кнопку для запуска игры
@@ -27,4 +27,6 @@ def send_welcome(message):
         reply_markup=markup
     )
 
-bot.infinity_polling()
+if __name__ == "__main__":
+    print("Бот запущен...")
+    bot.infinity_polling()
