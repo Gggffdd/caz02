@@ -1,12 +1,15 @@
 import telebot
 from telebot.types import MenuButtonWebApp, WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, send_from_directory
 import os
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import random
 import time
 import json
 from threading import Thread
+import numpy as np
+from io import BytesIO
+import base64
 
 # ==================== Telegram Bot Setup ====================
 TOKEN = "7523520150:AAGMPibPAl8D0I0E6ZeNR3zuIp0qKcshXN0"
@@ -86,7 +89,6 @@ class DogHouseSlot:
         os.makedirs('symbols', exist_ok=True)
 
         SYMBOL_SIZE = (100, 100)
-        BACKGROUND_COLOR = (30, 40, 60)
         COLORS = {
             '9': (255, 215, 0), '10': (255, 215, 0),
             'j': (70, 130, 180), 'q': (220, 20, 60),
@@ -95,26 +97,173 @@ class DogHouseSlot:
             'bowl': (255, 165, 0), 'doghouse': (139, 69, 19),
             'wild': (255, 215, 0), 'scatter': (255, 0, 0)
         }
-
-        for symbol in self.config['symbols']:
-            img = Image.new('RGB', SYMBOL_SIZE, BACKGROUND_COLOR)
+        
+        # Создание сложных текстур для символов
+        def create_textured_background(color, size):
+            # Градиентный фон
+            base = Image.new('RGB', size, color)
+            draw = ImageDraw.Draw(base)
+            
+            # Добавление текстур
+            for _ in range(50):
+                x, y = random.randint(0, size[0]), random.randint(0, size[1])
+                r = random.randint(2, 10)
+                draw.ellipse([x, y, x+r, y+r], fill=self.adjust_color(color, 30))
+            
+            # Добавление бликов
+            for _ in range(10):
+                x, y = random.randint(0, size[0]), random.randint(0, size[1])
+                r = random.randint(3, 8)
+                draw.ellipse([x, y, x+r, y+r], fill=self.adjust_color(color, 80))
+            
+            # Добавление тени
+            shadow = Image.new('RGBA', size, (0, 0, 0, 0))
+            draw_shadow = ImageDraw.Draw(shadow)
+            draw_shadow.rectangle([5, 5, size[0]-5, size[1]-5], fill=(0, 0, 0, 50))
+            base = Image.alpha_composite(base.convert('RGBA'), shadow)
+            
+            return base
+        
+        def create_doghouse_symbol(size):
+            img = Image.new('RGBA', size, (0, 0, 0, 0))
             draw = ImageDraw.Draw(img)
             
-            try:
-                font_size = 20 if symbol in ['wild', 'scatter'] else 40
-                font = ImageFont.truetype("arial.ttf", font_size)
-            except:
-                font = ImageFont.load_default()
+            # Основа будки
+            draw.rectangle([20, 40, 80, 90], fill=(139, 69, 19))
             
-            text = symbol.upper() if symbol in ['wild', 'scatter'] else symbol
-            text_width, text_height = draw.textsize(text, font=font)
-            position = ((SYMBOL_SIZE[0] - text_width) // 2, (SYMBOL_SIZE[1] - text_height) // 2)
-            draw.text(position, text, font=font, fill=COLORS[symbol])
+            # Крыша
+            draw.polygon([(10, 40), (50, 10), (90, 40)], fill=(160, 82, 45))
             
-            if symbol == 'wild':
-                draw.rectangle([5, 5, SYMBOL_SIZE[0]-5, SYMBOL_SIZE[1]-5], outline=(255, 215, 0), width=3)
+            # Дверь
+            draw.rectangle([45, 60, 55, 90], fill=(101, 67, 33))
+            
+            # Окна
+            draw.rectangle([30, 50, 40, 60], fill=(135, 206, 250))
+            draw.rectangle([60, 50, 70, 60], fill=(135, 206, 250))
+            
+            return img
+        
+        def create_bone_symbol(size):
+            img = Image.new('RGBA', size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(img)
+            
+            # Основная часть
+            draw.rectangle([30, 45, 70, 55], fill=(245, 222, 179))
+            
+            # Концы кости
+            draw.ellipse([25, 40, 45, 60], fill=(245, 222, 179))
+            draw.ellipse([55, 40, 75, 60], fill=(245, 222, 179))
+            
+            return img
+        
+        def create_bowl_symbol(size):
+            img = Image.new('RGBA', size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(img)
+            
+            # Миска
+            draw.ellipse([20, 50, 80, 90], fill=(210, 180, 140))
+            draw.ellipse([25, 45, 75, 85], fill=(255, 165, 0))
+            
+            return img
+        
+        def create_collar_symbol(size):
+            img = Image.new('RGBA', size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(img)
+            
+            # Ошейник
+            draw.ellipse([30, 40, 70, 80], fill=(192, 192, 192))
+            draw.ellipse([35, 45, 65, 75], fill=(220, 220, 220))
+            
+            # Пряжка
+            draw.rectangle([47, 47, 53, 53], fill=(255, 215, 0))
+            
+            return img
+        
+        def create_scatter_symbol(size):
+            img = Image.new('RGBA', size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(img)
+            
+            # Внешний круг
+            draw.ellipse([10, 10, 90, 90], fill=(255, 50, 50, 200))
+            
+            # Внутренний круг
+            draw.ellipse([20, 20, 80, 80], fill=(255, 100, 100, 220))
+            
+            # Звездочка
+            points = []
+            for i in range(5):
+                angle = 2 * np.pi * i / 5 - np.pi/2
+                points.append((50 + 25 * np.cos(angle), 50 + 25 * np.sin(angle)))
+                angle += 2 * np.pi / 10
+                points.append((50 + 10 * np.cos(angle), 50 + 10 * np.sin(angle)))
+            
+            draw.polygon(points, fill=(255, 215, 0))
+            
+            return img
+        
+        def create_wild_symbol(size):
+            img = Image.new('RGBA', size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(img)
+            
+            # Внешний ромб
+            draw.polygon([(50, 10), (90, 50), (50, 90), (10, 50)], fill=(255, 215, 0, 220))
+            
+            # Внутренний ромб
+            draw.polygon([(50, 25), (75, 50), (50, 75), (25, 50)], fill=(255, 165, 0, 240))
+            
+            # Буква W
+            draw.polygon([(30, 60), (40, 40), (50, 60), (60, 40), (70, 60), (65, 65), (50, 45), (35, 65)], fill=(0, 0, 0))
+            
+            return img
+        
+        self.adjust_color = lambda color, amount: tuple(max(0, min(255, c + amount)) for c in color)
+        
+        for symbol in self.config['symbols']:
+            if symbol == 'doghouse':
+                img = create_doghouse_symbol(SYMBOL_SIZE)
+            elif symbol == 'bone':
+                img = create_bone_symbol(SYMBOL_SIZE)
+            elif symbol == 'bowl':
+                img = create_bowl_symbol(SYMBOL_SIZE)
+            elif symbol == 'collar':
+                img = create_collar_symbol(SYMBOL_SIZE)
             elif symbol == 'scatter':
-                draw.ellipse([10, 10, SYMBOL_SIZE[0]-10, SYMBOL_SIZE[1]-10], outline=(255, 0, 0), width=3)
+                img = create_scatter_symbol(SYMBOL_SIZE)
+            elif symbol == 'wild':
+                img = create_wild_symbol(SYMBOL_SIZE)
+            else:
+                # Для стандартных символов
+                img = create_textured_background(COLORS[symbol], SYMBOL_SIZE)
+                draw = ImageDraw.Draw(img)
+                
+                try:
+                    font_size = 40 if symbol not in ['wild', 'scatter'] else 30
+                    font = ImageFont.truetype("arialbd.ttf", font_size)
+                except:
+                    font = ImageFont.load_default()
+                
+                text = symbol.upper() if symbol in ['wild', 'scatter'] else symbol
+                text_width, text_height = draw.textsize(text, font=font)
+                position = ((SYMBOL_SIZE[0] - text_width) // 2, (SYMBOL_SIZE[1] - text_height) // 2)
+                
+                # Тень текста
+                shadow_position = (position[0] + 2, position[1] + 2)
+                draw.text(shadow_position, text, font=font, fill=(0, 0, 0, 128))
+                
+                # Основной текст
+                draw.text(position, text, font=font, fill=(255, 255, 255))
+                
+                # Обводка
+                if symbol == 'wild':
+                    draw.rectangle([5, 5, SYMBOL_SIZE[0]-5, SYMBOL_SIZE[1]-5], outline=(255, 215, 0), width=3)
+                elif symbol == 'scatter':
+                    draw.ellipse([10, 10, SYMBOL_SIZE[0]-10, SYMBOL_SIZE[1]-10], outline=(255, 0, 0), width=3)
+            
+            # Добавление блестящего эффекта
+            shine = Image.new('RGBA', SYMBOL_SIZE, (0, 0, 0, 0))
+            draw_shine = ImageDraw.Draw(shine)
+            draw_shine.ellipse([-30, -30, 70, 70], fill=(255, 255, 255, 100))
+            img = Image.alpha_composite(img, shine)
             
             img.save(f'symbols/{symbol}.png')
 
@@ -280,6 +429,11 @@ def reset_game():
     slot_machine = get_slot_machine(user_id)
     slot_machine.reset_state()
     return jsonify({'success': True})
+
+# Serve symbols
+@app.route('/symbols/<filename>')
+def serve_symbol(filename):
+    return send_from_directory('symbols', filename)
 
 # ==================== Telegram Bot Handlers ====================
 @bot.message_handler(commands=['start', 'help'])
