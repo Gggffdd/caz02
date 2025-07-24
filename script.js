@@ -188,10 +188,15 @@ function renderReel(reelIndex) {
         const symbol = state.currentReels[reelIndex][symbolIndex];
         
         const symbolElement = document.createElement('div');
-        symbolElement.className = `reel-symbol symbol symbol-${symbol}`;
-        symbolElement.dataset.symbol = symbol;
-        symbolElement.style.transform = `translateY(${i * config.symbolHeight}px)`;
+        symbolElement.className = 'reel-symbol';
         
+        const img = document.createElement('img');
+        img.src = `/symbols/${symbol}.png`;
+        img.alt = symbol;
+        img.className = 'symbol-img';
+        symbolElement.appendChild(img);
+        
+        symbolElement.style.transform = `translateY(${i * config.symbolHeight}px)`;
         reelElement.appendChild(symbolElement);
     }
 }
